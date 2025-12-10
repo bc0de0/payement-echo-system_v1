@@ -38,11 +38,13 @@
 ## 🌍 Internationalization (i18n)
 
 - ✅ Multi-language support via Accept-Language header
-- ✅ Supported languages: English (en), Spanish (es), French (fr), German (de), Hindi (hi), Bengali (bn), Tamil (ta), Telugu (te), Kannada (kn), Russian (ru), Chinese (zh)
-- ✅ Default language: English (en)
-- ✅ Localized error messages
-- ✅ Localized validation messages
+- ✅ Supported languages: Hindi (hi - default), English (en), Spanish (es), French (fr), German (de), Bengali (bn), Tamil (ta), Telugu (te), Kannada (kn), Russian (ru), Chinese (zh)
+- ✅ Default language: Hindi (hi)
+- ✅ Localized error messages for all exceptions
+- ✅ Localized validation field errors
 - ✅ MessageSource configuration with fallback
+- ✅ LocaleFilter for automatic locale resolution
+- ✅ 8 language message property files
 
 ## 🔒 Security & Validation
 

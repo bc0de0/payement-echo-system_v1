@@ -297,25 +297,34 @@ All errors follow a consistent format with timestamp, status, error type, messag
 
 ### Internationalization (i18n)
 
-Error messages support multiple languages via the `Accept-Language` header:
+Error messages and validation errors support multiple languages via the `Accept-Language` header:
 
 ```bash
-# English (default)
+# Hindi (default)
+curl http://localhost:8080/api/v1/payments/123
+
+# English
 curl -H "Accept-Language: en" http://localhost:8080/api/v1/payments/123
 
-# Spanish
-curl -H "Accept-Language: es" http://localhost:8080/api/v1/payments/123
+# Tamil
+curl -H "Accept-Language: ta" http://localhost:8080/api/v1/payments/123
 
-# Hindi
-curl -H "Accept-Language: hi" http://localhost:8080/api/v1/payments/123
+# Russian
+curl -H "Accept-Language: ru" http://localhost:8080/api/v1/payments/123
 
 # Bengali
 curl -H "Accept-Language: bn" http://localhost:8080/api/v1/payments/123
 ```
 
-Supported languages: English (en), Spanish (es), French (fr), German (de), Hindi (hi), Bengali (bn), Tamil (ta), Telugu (te), Kannada (kn), Russian (ru), Chinese (zh)
+**Supported Languages**: Hindi (hi - default), English (en), Spanish (es), French (fr), German (de), Bengali (bn), Tamil (ta), Telugu (te), Kannada (kn), Russian (ru), Chinese (zh)
 
-**Default Language**: Hindi (hi) - All API endpoints default to Hindi if Accept-Language header is not provided.
+**Default Language**: Hindi (hi) - All API endpoints default to Hindi if `Accept-Language` header is not provided.
+
+**Features**:
+- ✅ Localized error messages (404, 400, 500)
+- ✅ Localized validation field errors
+- ✅ Works for all REST and GraphQL APIs
+- ✅ Postman collection includes language dropdown variable
 
 ## Logging
 

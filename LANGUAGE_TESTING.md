@@ -6,11 +6,11 @@ The Payment Echo System supports 11 languages. Use the `Accept-Language` header 
 
 ## Supported Languages
 
-1. **English (en)** - Default fallback
-2. **Spanish (es)** - Español
-3. **French (fr)** - Français
-4. **German (de)** - Deutsch
-5. **Hindi (hi)** - हिंदी (Default)
+1. **Hindi (hi)** - हिंदी (Default)
+2. **English (en)** - English
+3. **Spanish (es)** - Español
+4. **French (fr)** - Français
+5. **German (de)** - Deutsch
 6. **Bengali (bn)** - বাংলা
 7. **Tamil (ta)** - தமிழ்
 8. **Telugu (te)** - తెలుగు

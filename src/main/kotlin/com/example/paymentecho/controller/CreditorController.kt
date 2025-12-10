@@ -17,9 +17,19 @@ import org.springframework.web.bind.annotation.*
 import java.util.*
 import java.util.Locale
 
+/**
+ * REST controller for creditor management operations.
+ * 
+ * Supports internationalization (i18n) via Accept-Language header.
+ * Default language: Hindi (hi)
+ * 
+ * All endpoints support pagination, filtering, and sorting.
+ * 
+ * @param service The creditor service for business logic
+ */
 @RestController
 @RequestMapping("/api/v1/creditors")
-@Tag(name = "Creditors", description = "Creditor management API")
+@Tag(name = "Creditors", description = "Creditor management API with i18n support")
 class CreditorController(private val service: CreditorService) {
 
     @GetMapping

@@ -17,6 +17,17 @@ import org.springframework.web.servlet.LocaleResolver
 import java.time.Instant
 import java.util.*
 
+/**
+ * Global exception handler that provides localized error messages for all exceptions.
+ * 
+ * This handler intercepts all exceptions thrown by controllers and returns standardized,
+ * localized error responses based on the Accept-Language header.
+ * 
+ * Supported languages: hi (default), en, es, fr, de, bn, ta, te, kn, ru, zh
+ * 
+ * @param messageSource The message source for retrieving localized messages
+ * @param localeResolver The locale resolver for determining the request locale
+ */
 @RestControllerAdvice
 class GlobalExceptionHandler(
     private val messageSource: MessageSource,
@@ -25,6 +36,12 @@ class GlobalExceptionHandler(
 
     private val logger = LoggerFactory.getLogger(GlobalExceptionHandler::class.java)
     
+    /**
+     * Resolves the locale from the request, falling back to LocaleContextHolder or default (Hindi).
+     * 
+     * @param request The web request
+     * @return The resolved locale, defaulting to Hindi if resolution fails
+     */
     private fun getLocale(request: WebRequest): Locale {
         return if (request is ServletWebRequest) {
             try {

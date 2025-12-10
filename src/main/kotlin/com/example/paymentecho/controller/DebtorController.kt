@@ -17,9 +17,19 @@ import org.springframework.web.bind.annotation.*
 import java.util.*
 import java.util.Locale
 
+/**
+ * REST controller for debtor management operations.
+ * 
+ * Supports internationalization (i18n) via Accept-Language header.
+ * Default language: Hindi (hi)
+ * 
+ * All endpoints support pagination, filtering, and sorting.
+ * 
+ * @param service The debtor service for business logic
+ */
 @RestController
 @RequestMapping("/api/v1/debtors")
-@Tag(name = "Debtors", description = "Debtor management API")
+@Tag(name = "Debtors", description = "Debtor management API with i18n support")
 class DebtorController(private val service: DebtorService) {
 
     @GetMapping
