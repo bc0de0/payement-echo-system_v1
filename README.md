@@ -14,6 +14,7 @@ A comprehensive Spring Boot application for managing payments, creditors, and de
 - ✅ **Soft Delete** - Records are marked as deleted, not physically removed
 - ✅ **Logging** - AOP-based logging, request/response logging with sensitive data masking
 - ✅ **API Documentation** - OpenAPI/Swagger UI integration with comprehensive examples
+- ✅ **GraphQL API** - Complete GraphQL API alongside REST API with GraphiQL playground
 - ✅ **Health Monitoring** - Spring Boot Actuator endpoints with detailed health checks
 - ✅ **Hot Reload** - Spring Boot DevTools for automatic restart and live reload
 - ✅ **Comprehensive Tests** - 92 tests covering unit, integration, edge cases, and end-to-end scenarios
@@ -60,7 +61,9 @@ See [HOT_RELOAD_GUIDE.md](HOT_RELOAD_GUIDE.md) for detailed instructions.
 
 ## API Endpoints
 
-All endpoints are versioned under `/api/v1/`
+### REST API
+
+All REST endpoints are versioned under `/api/v1/`
 
 ### Payments
 
@@ -94,8 +97,10 @@ All endpoints are versioned under `/api/v1/`
 
 ### Documentation
 
-- `GET /swagger-ui.html` - Swagger UI (Interactive API documentation)
+- `GET /swagger-ui.html` - Swagger UI (Interactive REST API documentation)
 - `GET /v3/api-docs` - OpenAPI JSON specification
+- `GET /graphiql` - GraphiQL (Interactive GraphQL playground)
+- `POST /graphql` - GraphQL endpoint
 
 ## API Response Format
 

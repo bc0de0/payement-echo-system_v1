@@ -32,6 +32,9 @@ dependencies {
     // OpenAPI/Swagger
     implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:2.3.0")
 
+    // GraphQL
+    implementation("org.springframework.boot:spring-boot-starter-graphql")
+
     runtimeOnly("com.h2database:h2")
 
     // Spring Boot DevTools for hot reload

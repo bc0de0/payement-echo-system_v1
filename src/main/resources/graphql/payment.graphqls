@@ -1,0 +1,116 @@
+type Query {
+    payments(page: Int = 0, size: Int = 20, sort: String): PaymentPage
+    payment(id: ID!): Payment
+    paymentsByStatus(status: String!, page: Int = 0, size: Int = 20): PaymentPage
+    paymentsByCurrency(currency: String!, page: Int = 0, size: Int = 20): PaymentPage
+    paymentsByAmountRange(minAmount: Float!, maxAmount: Float!, page: Int = 0, size: Int = 20): PaymentPage
+    
+    creditors(page: Int = 0, size: Int = 20, sort: String): CreditorPage
+    creditor(id: ID!): Creditor
+    creditorsByName(name: String!, page: Int = 0, size: Int = 20): CreditorPage
+    creditorsByBankCode(bankCode: String!, page: Int = 0, size: Int = 20): CreditorPage
+    
+    debtors(page: Int = 0, size: Int = 20, sort: String): DebtorPage
+    debtor(id: ID!): Debtor
+    debtorsByName(name: String!, page: Int = 0, size: Int = 20): DebtorPage
+    debtorsByBankCode(bankCode: String!, page: Int = 0, size: Int = 20): DebtorPage
+}
+
+type Mutation {
+    createPayment(input: PaymentInput!): Payment
+    echoPayment(input: PaymentEchoInput!): Payment
+    createCreditor(input: CreditorInput!): Creditor
+    deleteCreditor(id: ID!): Boolean
+    createDebtor(input: DebtorInput!): Debtor
+    deleteDebtor(id: ID!): Boolean
+}
+
+type Payment {
+    id: ID!
+    amount: Float!
+    currency: String!
+    status: String!
+    createdAt: String!
+    creditorId: ID
+    debtorId: ID
+    creditor: Creditor
+    debtor: Debtor
+}
+
+type Creditor {
+    id: ID!
+    name: String!
+    accountNumber: String!
+    bankCode: String!
+    address: String
+    email: String
+    createdAt: String!
+    updatedAt: String!
+}
+
+type Debtor {
+    id: ID!
+    name: String!
+    accountNumber: String!
+    bankCode: String!
+    address: String
+    email: String
+    createdAt: String!
+    updatedAt: String!
+}
+
+type PaymentPage {
+    payments: [Payment!]!
+    total: Int!
+    page: Int!
+    size: Int!
+    totalPages: Int!
+}
+
+type CreditorPage {
+    creditors: [Creditor!]!
+    total: Int!
+    page: Int!
+    size: Int!
+    totalPages: Int!
+}
+
+type DebtorPage {
+    debtors: [Debtor!]!
+    total: Int!
+    page: Int!
+    size: Int!
+    totalPages: Int!
+}
+
+input PaymentInput {
+    amount: Float!
+    currency: String!
+    status: String!
+    creditorId: ID
+    debtorId: ID
+}
+
+input PaymentEchoInput {
+    amount: Float!
+    currency: String!
+    status: String!
+    creditorId: ID
+    debtorId: ID
+}
+
+input CreditorInput {
+    name: String!
+    accountNumber: String!
+    bankCode: String!
+    address: String
+    email: String
+}
+
+input DebtorInput {
+    name: String!
+    accountNumber: String!
+    bankCode: String!
+    address: String
+    email: String
+}
