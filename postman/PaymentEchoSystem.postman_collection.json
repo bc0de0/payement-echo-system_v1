@@ -2,7 +2,7 @@
   "info": {
     "_postman_id": "payment-echo-system-v1",
     "name": "Payment Echo System API v1",
-    "description": "Complete API collection for Payment Echo System with filtering, pagination, and i18n support",
+    "description": "Complete API collection for Payment Echo System with filtering, pagination, and i18n support. All requests include test scripts and auto-extract IDs.",
     "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
     "_exporter_id": "payment-echo-system"
   },
@@ -12,6 +12,24 @@
       "item": [
         {
           "name": "Health Check",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test(\"Response has status field\", function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData).to.have.property('status');",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
           "request": {
             "method": "GET",
             "header": [],
@@ -24,6 +42,19 @@
         },
         {
           "name": "Application Info",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
           "request": {
             "method": "GET",
             "header": [],
@@ -36,6 +67,19 @@
         },
         {
           "name": "Metrics",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
           "request": {
             "method": "GET",
             "header": [],
@@ -53,6 +97,39 @@
       "item": [
         {
           "name": "Get All Payments",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test(\"Response has payments array\", function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData).to.have.property('payments');",
+                  "    pm.expect(jsonData.payments).to.be.an('array');",
+                  "});",
+                  "",
+                  "pm.test(\"Response has total count\", function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData).to.have.property('total');",
+                  "});",
+                  "",
+                  "// Auto-extract first payment ID if available",
+                  "if (pm.response.code === 200) {",
+                  "    var jsonData = pm.response.json();",
+                  "    if (jsonData.payments && jsonData.payments.length > 0) {",
+                  "        pm.collectionVariables.set('paymentId', jsonData.payments[0].id);",
+                  "        console.log('Set paymentId variable:', jsonData.payments[0].id);",
+                  "    }",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
           "request": {
             "method": "GET",
             "header": [],
@@ -63,18 +140,52 @@
               "query": [
                 {
                   "key": "page",
-                  "value": "0"
+                  "value": "0",
+                  "description": "Page number (0-indexed)"
                 },
                 {
                   "key": "size",
-                  "value": "20"
+                  "value": "20",
+                  "description": "Page size"
                 }
               ]
-            }
+            },
+            "description": "Get all payments with pagination. Auto-extracts first payment ID to {{paymentId}} variable."
           }
         },
         {
           "name": "Get Payments with Filters (Sample: USD RECEIVED)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test(\"All payments have RECEIVED status\", function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    if (jsonData.payments && jsonData.payments.length > 0) {",
+                  "        jsonData.payments.forEach(function(payment) {",
+                  "            pm.expect(payment.status).to.eql('RECEIVED');",
+                  "        });",
+                  "    }",
+                  "});",
+                  "",
+                  "pm.test(\"All payments have USD currency\", function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    if (jsonData.payments && jsonData.payments.length > 0) {",
+                  "        jsonData.payments.forEach(function(payment) {",
+                  "            pm.expect(payment.currency).to.eql('USD');",
+                  "        });",
+                  "    }",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
           "request": {
             "method": "GET",
             "header": [],
@@ -117,7 +228,79 @@
           }
         },
         {
-          "name": "Get Payments Sorted",
+          "name": "Get Payments Filtered by Currency (EUR)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test(\"All payments have EUR currency\", function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    if (jsonData.payments && jsonData.payments.length > 0) {",
+                  "        jsonData.payments.forEach(function(payment) {",
+                  "            pm.expect(payment.currency).to.eql('EUR');",
+                  "        });",
+                  "    }",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/payments?currency=EUR&page=0&size=20",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "payments"],
+              "query": [
+                {
+                  "key": "currency",
+                  "value": "EUR",
+                  "description": "Filter by EUR currency"
+                },
+                {
+                  "key": "page",
+                  "value": "0"
+                },
+                {
+                  "key": "size",
+                  "value": "20"
+                }
+              ]
+            },
+            "description": "Filter payments by EUR currency. Sample data includes: 2500.50 EUR, 2000.00 EUR"
+          }
+        },
+        {
+          "name": "Get Payments Sorted by Amount (Descending)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test(\"Payments are sorted by amount descending\", function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    if (jsonData.payments && jsonData.payments.length > 1) {",
+                  "        for (var i = 0; i < jsonData.payments.length - 1; i++) {",
+                  "            pm.expect(jsonData.payments[i].amount).to.be.at.least(jsonData.payments[i+1].amount);",
+                  "        }",
+                  "    }",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
           "request": {
             "method": "GET",
             "header": [],
@@ -136,14 +319,56 @@
                 },
                 {
                   "key": "sort",
-                  "value": "amount,desc"
+                  "value": "amount,desc",
+                  "description": "Sort by amount descending"
                 }
               ]
-            }
+            },
+            "description": "Get payments sorted by amount in descending order"
           }
         },
         {
           "name": "Get Payment by ID",
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "exec": [
+                  "// Ensure paymentId is set - if not, use a sample one",
+                  "if (!pm.collectionVariables.get('paymentId')) {",
+                  "    console.log('Warning: paymentId variable not set. Run \"Get All Payments\" first.');",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200 or 404\", function () {",
+                  "    pm.expect(pm.response.code).to.be.oneOf([200, 404]);",
+                  "});",
+                  "",
+                  "if (pm.response.code === 200) {",
+                  "    pm.test(\"Response has payment ID\", function () {",
+                  "        var jsonData = pm.response.json();",
+                  "        pm.expect(jsonData).to.have.property('id');",
+                  "    });",
+                  "",
+                  "    pm.test(\"Response has required fields\", function () {",
+                  "        var jsonData = pm.response.json();",
+                  "        pm.expect(jsonData).to.have.property('amount');",
+                  "        pm.expect(jsonData).to.have.property('currency');",
+                  "        pm.expect(jsonData).to.have.property('status');",
+                  "        pm.expect(jsonData).to.have.property('createdAt');",
+                  "    });",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
           "request": {
             "method": "GET",
             "header": [],
@@ -151,81 +376,45 @@
               "raw": "{{baseUrl}}/api/v1/payments/{{paymentId}}",
               "host": ["{{baseUrl}}"],
               "path": ["api", "v1", "payments", "{{paymentId}}"]
-            }
+            },
+            "description": "Get payment by ID. Uses {{paymentId}} variable set by \"Get All Payments\" request."
           }
         },
-				{
-					"name": "Create Payment (Sample: USD RECEIVED)",
-					"event": [
-						{
-							"listen": "prerequest",
-							"script": {
-								"exec": [
-									"// IMPORTANT: Set creditorId and debtorId variables first!",
-									"// 1. Run 'Get All Creditors' request and copy an 'id' from response",
-									"// 2. Set {{creditorId}} variable: pm.collectionVariables.set('creditorId', 'paste-id-here')",
-									"// 3. Run 'Get All Debtors' request and copy an 'id' from response",
-									"// 4. Set {{debtorId}} variable: pm.collectionVariables.set('debtorId', 'paste-id-here')",
-									"// Or use standalone payment request below which doesn't need IDs"
-								],
-								"type": "text/javascript"
-							}
-						}
-					],
-					"request": {
-						"method": "POST",
-						"header": [
-							{
-								"key": "Content-Type",
-								"value": "application/json"
-							}
-						],
-						"body": {
-							"mode": "raw",
-							"raw": "{\n  \"amount\": 1500.00,\n  \"currency\": \"USD\",\n  \"status\": \"RECEIVED\",\n  \"creditorId\": \"{{creditorId}}\",\n  \"debtorId\": \"{{debtorId}}\"\n}",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
-						},
-						"description": "⚠️ IMPORTANT: Before running this request:\n1. Run 'Get All Creditors' and copy an 'id' value\n2. Set {{creditorId}} variable in Postman (Collection Variables)\n3. Run 'Get All Debtors' and copy an 'id' value\n4. Set {{debtorId}} variable in Postman\n\nOr use 'Create Payment (Standalone)' request below which doesn't require IDs.\n\nSample data: amount=1500.00, currency=USD, status=RECEIVED"
-					},
-					"url": {
-						"raw": "{{baseUrl}}/api/v1/payments",
-						"host": ["{{baseUrl}}"],
-						"path": ["api", "v1", "payments"]
-					}
-				},
-				{
-					"name": "Create Payment (Sample: EUR PROCESSING)",
-					"request": {
-						"method": "POST",
-						"header": [
-							{
-								"key": "Content-Type",
-								"value": "application/json"
-							}
-						],
-						"body": {
-							"mode": "raw",
-							"raw": "{\n  \"amount\": 2500.50,\n  \"currency\": \"EUR\",\n  \"status\": \"PROCESSING\",\n  \"creditorId\": \"{{creditorId}}\",\n  \"debtorId\": \"{{debtorId}}\"\n}",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
-						},
-						"description": "⚠️ Requires {{creditorId}} and {{debtorId}} variables. Set them first using 'Get All Creditors' and 'Get All Debtors'.\n\nSample data: amount=2500.50, currency=EUR, status=PROCESSING"
-					},
-					"url": {
-						"raw": "{{baseUrl}}/api/v1/payments",
-						"host": ["{{baseUrl}}"],
-						"path": ["api", "v1", "payments"]
-					}
-				},
         {
           "name": "Create Payment (Standalone - No Creditor/Debtor)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 201\", function () {",
+                  "    pm.response.to.have.status(201);",
+                  "});",
+                  "",
+                  "pm.test(\"Response has payment ID\", function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData).to.have.property('id');",
+                  "    pm.collectionVariables.set('paymentId', jsonData.id);",
+                  "    console.log('Set paymentId variable:', jsonData.id);",
+                  "});",
+                  "",
+                  "pm.test(\"Response matches request\", function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    var requestData = JSON.parse(pm.request.body.raw);",
+                  "    pm.expect(jsonData.amount).to.eql(requestData.amount);",
+                  "    pm.expect(jsonData.currency).to.eql(requestData.currency);",
+                  "    pm.expect(jsonData.status).to.eql(requestData.status);",
+                  "});",
+                  "",
+                  "pm.test(\"Response has createdAt timestamp\", function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData).to.have.property('createdAt');",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
           "request": {
             "method": "POST",
             "header": [
@@ -243,7 +432,7 @@
                 }
               }
             },
-            "description": "Create standalone payment without creditor/debtor. Sample data: amount=1000.00, currency=USD, status=RECEIVED"
+            "description": "Create standalone payment without creditor/debtor. This works immediately without any setup. Auto-extracts payment ID to {{paymentId}} variable."
           },
           "url": {
             "raw": "{{baseUrl}}/api/v1/payments",
@@ -252,7 +441,102 @@
           }
         },
         {
-          "name": "Echo Payment (Sample)",
+          "name": "Create Payment (With Creditor/Debtor)",
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "exec": [
+                  "// Ensure creditorId and debtorId are set",
+                  "if (!pm.collectionVariables.get('creditorId') || !pm.collectionVariables.get('debtorId')) {",
+                  "    console.log('Warning: creditorId or debtorId not set. Run \"Get All Creditors\" and \"Get All Debtors\" first.');",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 201\", function () {",
+                  "    pm.response.to.have.status(201);",
+                  "});",
+                  "",
+                  "pm.test(\"Response has payment ID\", function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData).to.have.property('id');",
+                  "    pm.collectionVariables.set('paymentId', jsonData.id);",
+                  "});",
+                  "",
+                  "pm.test(\"Response includes creditor and debtor IDs\", function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    var requestData = JSON.parse(pm.request.body.raw);",
+                  "    if (requestData.creditorId) {",
+                  "        pm.expect(jsonData.creditorId).to.eql(requestData.creditorId);",
+                  "    }",
+                  "    if (requestData.debtorId) {",
+                  "        pm.expect(jsonData.debtorId).to.eql(requestData.debtorId);",
+                  "    }",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"amount\": 1500.00,\n  \"currency\": \"USD\",\n  \"status\": \"RECEIVED\",\n  \"creditorId\": \"{{creditorId}}\",\n  \"debtorId\": \"{{debtorId}}\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "description": "⚠️ IMPORTANT: Requires {{creditorId}} and {{debtorId}} variables.\n\n1. Run \"Get All Creditors\" to set {{creditorId}}\n2. Run \"Get All Debtors\" to set {{debtorId}}\n3. Then run this request\n\nOr use \"Create Payment (Standalone)\" which doesn't require IDs."
+          },
+          "url": {
+            "raw": "{{baseUrl}}/api/v1/payments",
+            "host": ["{{baseUrl}}"],
+            "path": ["api", "v1", "payments"]
+          }
+        },
+        {
+          "name": "Echo Payment",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test(\"Response has payment ID\", function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData).to.have.property('id');",
+                  "});",
+                  "",
+                  "pm.test(\"Response matches request\", function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    var requestData = JSON.parse(pm.request.body.raw);",
+                  "    pm.expect(jsonData.amount).to.eql(requestData.amount);",
+                  "    pm.expect(jsonData.currency).to.eql(requestData.currency);",
+                  "    pm.expect(jsonData.status).to.eql(requestData.status);",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
           "request": {
             "method": "POST",
             "header": [
@@ -285,6 +569,39 @@
       "item": [
         {
           "name": "Get All Creditors",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test(\"Response has creditors array\", function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData).to.have.property('creditors');",
+                  "    pm.expect(jsonData.creditors).to.be.an('array');",
+                  "});",
+                  "",
+                  "pm.test(\"Response has total count\", function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData).to.have.property('total');",
+                  "});",
+                  "",
+                  "// Auto-extract first creditor ID if available",
+                  "if (pm.response.code === 200) {",
+                  "    var jsonData = pm.response.json();",
+                  "    if (jsonData.creditors && jsonData.creditors.length > 0) {",
+                  "        pm.collectionVariables.set('creditorId', jsonData.creditors[0].id);",
+                  "        console.log('Set creditorId variable:', jsonData.creditors[0].id);",
+                  "    }",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
           "request": {
             "method": "GET",
             "header": [],
@@ -302,11 +619,34 @@
                   "value": "20"
                 }
               ]
-            }
+            },
+            "description": "Get all creditors with pagination. Auto-extracts first creditor ID to {{creditorId}} variable."
           }
         },
         {
           "name": "Get Creditors Filtered by Name (Sample: Acme)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test(\"All creditors match name filter\", function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    if (jsonData.creditors && jsonData.creditors.length > 0) {",
+                  "        jsonData.creditors.forEach(function(creditor) {",
+                  "            pm.expect(creditor.name.toLowerCase()).to.include('acme');",
+                  "        });",
+                  "    }",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
           "request": {
             "method": "GET",
             "header": [],
@@ -335,6 +675,28 @@
         },
         {
           "name": "Get Creditors Filtered by Bank Code",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test(\"All creditors have BANK001 bank code\", function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    if (jsonData.creditors && jsonData.creditors.length > 0) {",
+                  "        jsonData.creditors.forEach(function(creditor) {",
+                  "            pm.expect(creditor.bankCode).to.eql('BANK001');",
+                  "        });",
+                  "    }",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
           "request": {
             "method": "GET",
             "header": [],
@@ -345,7 +707,8 @@
               "query": [
                 {
                   "key": "bankCode",
-                  "value": "BANK001"
+                  "value": "BANK001",
+                  "description": "Filter by bank code"
                 },
                 {
                   "key": "page",
@@ -356,11 +719,51 @@
                   "value": "20"
                 }
               ]
-            }
+            },
+            "description": "Filter creditors by bank code BANK001"
           }
         },
         {
           "name": "Get Creditor by ID",
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "exec": [
+                  "// Ensure creditorId is set",
+                  "if (!pm.collectionVariables.get('creditorId')) {",
+                  "    console.log('Warning: creditorId variable not set. Run \"Get All Creditors\" first.');",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200 or 404\", function () {",
+                  "    pm.expect(pm.response.code).to.be.oneOf([200, 404]);",
+                  "});",
+                  "",
+                  "if (pm.response.code === 200) {",
+                  "    pm.test(\"Response has creditor ID\", function () {",
+                  "        var jsonData = pm.response.json();",
+                  "        pm.expect(jsonData).to.have.property('id');",
+                  "    });",
+                  "",
+                  "    pm.test(\"Response has required fields\", function () {",
+                  "        var jsonData = pm.response.json();",
+                  "        pm.expect(jsonData).to.have.property('name');",
+                  "        pm.expect(jsonData).to.have.property('accountNumber');",
+                  "        pm.expect(jsonData).to.have.property('bankCode');",
+                  "    });",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
           "request": {
             "method": "GET",
             "header": [],
@@ -368,11 +771,39 @@
               "raw": "{{baseUrl}}/api/v1/creditors/{{creditorId}}",
               "host": ["{{baseUrl}}"],
               "path": ["api", "v1", "creditors", "{{creditorId}}"]
-            }
+            },
+            "description": "Get creditor by ID. Uses {{creditorId}} variable set by \"Get All Creditors\" request."
           }
         },
         {
           "name": "Create Creditor (Sample: Acme Corporation)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 201\", function () {",
+                  "    pm.response.to.have.status(201);",
+                  "});",
+                  "",
+                  "pm.test(\"Response has creditor ID\", function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData).to.have.property('id');",
+                  "    pm.collectionVariables.set('creditorId', jsonData.id);",
+                  "});",
+                  "",
+                  "pm.test(\"Response matches request\", function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    var requestData = JSON.parse(pm.request.body.raw);",
+                  "    pm.expect(jsonData.name).to.eql(requestData.name);",
+                  "    pm.expect(jsonData.accountNumber).to.eql(requestData.accountNumber);",
+                  "    pm.expect(jsonData.bankCode).to.eql(requestData.bankCode);",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
           "request": {
             "method": "POST",
             "header": [
@@ -390,61 +821,7 @@
                 }
               }
             },
-            "description": "Create creditor using sample data. This matches the sample data in the database."
-          },
-          "url": {
-            "raw": "{{baseUrl}}/api/v1/creditors",
-            "host": ["{{baseUrl}}"],
-            "path": ["api", "v1", "creditors"]
-          }
-        },
-        {
-          "name": "Create Creditor (Sample: Tech Solutions Inc)",
-          "request": {
-            "method": "POST",
-            "header": [
-              {
-                "key": "Content-Type",
-                "value": "application/json"
-              }
-            ],
-            "body": {
-              "mode": "raw",
-              "raw": "{\n  \"name\": \"Tech Solutions Inc\",\n  \"accountNumber\": \"ACC002345678\",\n  \"bankCode\": \"BANK002\",\n  \"email\": \"payments@techsolutions.com\",\n  \"address\": \"456 Tech Avenue, San Francisco, CA 94102\"\n}",
-              "options": {
-                "raw": {
-                  "language": "json"
-                }
-              }
-            },
-            "description": "Create second sample creditor."
-          },
-          "url": {
-            "raw": "{{baseUrl}}/api/v1/creditors",
-            "host": ["{{baseUrl}}"],
-            "path": ["api", "v1", "creditors"]
-          }
-        },
-        {
-          "name": "Create Creditor (Sample: Global Services Ltd)",
-          "request": {
-            "method": "POST",
-            "header": [
-              {
-                "key": "Content-Type",
-                "value": "application/json"
-              }
-            ],
-            "body": {
-              "mode": "raw",
-              "raw": "{\n  \"name\": \"Global Services Ltd\",\n  \"accountNumber\": \"ACC003456789\",\n  \"bankCode\": \"BANK003\",\n  \"email\": \"accounts@globalservices.com\",\n  \"address\": \"789 Global Plaza, London, UK\"\n}",
-              "options": {
-                "raw": {
-                  "language": "json"
-                }
-              }
-            },
-            "description": "Create third sample creditor."
+            "description": "Create creditor using sample data. This matches the sample data in the database. Auto-extracts creditor ID to {{creditorId}} variable."
           },
           "url": {
             "raw": "{{baseUrl}}/api/v1/creditors",
@@ -454,6 +831,35 @@
         },
         {
           "name": "Delete Creditor (Soft Delete)",
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "exec": [
+                  "// Ensure creditorId is set",
+                  "if (!pm.collectionVariables.get('creditorId')) {",
+                  "    console.log('Warning: creditorId variable not set. Run \"Get All Creditors\" first.');",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 204\", function () {",
+                  "    pm.response.to.have.status(204);",
+                  "});",
+                  "",
+                  "pm.test(\"Response body is empty\", function () {",
+                  "    pm.expect(pm.response.text()).to.be.empty;",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
           "request": {
             "method": "DELETE",
             "header": [],
@@ -461,7 +867,8 @@
               "raw": "{{baseUrl}}/api/v1/creditors/{{creditorId}}",
               "host": ["{{baseUrl}}"],
               "path": ["api", "v1", "creditors", "{{creditorId}}"]
-            }
+            },
+            "description": "Soft delete a creditor by ID. Uses {{creditorId}} variable. After deletion, the creditor will not appear in list requests but can be recovered."
           }
         }
       ]
@@ -471,6 +878,39 @@
       "item": [
         {
           "name": "Get All Debtors",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test(\"Response has debtors array\", function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData).to.have.property('debtors');",
+                  "    pm.expect(jsonData.debtors).to.be.an('array');",
+                  "});",
+                  "",
+                  "pm.test(\"Response has total count\", function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData).to.have.property('total');",
+                  "});",
+                  "",
+                  "// Auto-extract first debtor ID if available",
+                  "if (pm.response.code === 200) {",
+                  "    var jsonData = pm.response.json();",
+                  "    if (jsonData.debtors && jsonData.debtors.length > 0) {",
+                  "        pm.collectionVariables.set('debtorId', jsonData.debtors[0].id);",
+                  "        console.log('Set debtorId variable:', jsonData.debtors[0].id);",
+                  "    }",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
           "request": {
             "method": "GET",
             "header": [],
@@ -488,11 +928,34 @@
                   "value": "20"
                 }
               ]
-            }
+            },
+            "description": "Get all debtors with pagination. Auto-extracts first debtor ID to {{debtorId}} variable."
           }
         },
         {
           "name": "Get Debtors Filtered by Name (Sample: John)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test(\"All debtors match name filter\", function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    if (jsonData.debtors && jsonData.debtors.length > 0) {",
+                  "        jsonData.debtors.forEach(function(debtor) {",
+                  "            pm.expect(debtor.name.toLowerCase()).to.include('john');",
+                  "        });",
+                  "    }",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
           "request": {
             "method": "GET",
             "header": [],
@@ -521,6 +984,28 @@
         },
         {
           "name": "Get Debtors Filtered by Bank Code",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test(\"All debtors have BANK002 bank code\", function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    if (jsonData.debtors && jsonData.debtors.length > 0) {",
+                  "        jsonData.debtors.forEach(function(debtor) {",
+                  "            pm.expect(debtor.bankCode).to.eql('BANK002');",
+                  "        });",
+                  "    }",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
           "request": {
             "method": "GET",
             "header": [],
@@ -531,7 +1016,8 @@
               "query": [
                 {
                   "key": "bankCode",
-                  "value": "BANK002"
+                  "value": "BANK002",
+                  "description": "Filter by bank code"
                 },
                 {
                   "key": "page",
@@ -542,11 +1028,51 @@
                   "value": "20"
                 }
               ]
-            }
+            },
+            "description": "Filter debtors by bank code BANK002"
           }
         },
         {
           "name": "Get Debtor by ID",
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "exec": [
+                  "// Ensure debtorId is set",
+                  "if (!pm.collectionVariables.get('debtorId')) {",
+                  "    console.log('Warning: debtorId variable not set. Run \"Get All Debtors\" first.');",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200 or 404\", function () {",
+                  "    pm.expect(pm.response.code).to.be.oneOf([200, 404]);",
+                  "});",
+                  "",
+                  "if (pm.response.code === 200) {",
+                  "    pm.test(\"Response has debtor ID\", function () {",
+                  "        var jsonData = pm.response.json();",
+                  "        pm.expect(jsonData).to.have.property('id');",
+                  "    });",
+                  "",
+                  "    pm.test(\"Response has required fields\", function () {",
+                  "        var jsonData = pm.response.json();",
+                  "        pm.expect(jsonData).to.have.property('name');",
+                  "        pm.expect(jsonData).to.have.property('accountNumber');",
+                  "        pm.expect(jsonData).to.have.property('bankCode');",
+                  "    });",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
           "request": {
             "method": "GET",
             "header": [],
@@ -554,11 +1080,39 @@
               "raw": "{{baseUrl}}/api/v1/debtors/{{debtorId}}",
               "host": ["{{baseUrl}}"],
               "path": ["api", "v1", "debtors", "{{debtorId}}"]
-            }
+            },
+            "description": "Get debtor by ID. Uses {{debtorId}} variable set by \"Get All Debtors\" request."
           }
         },
         {
           "name": "Create Debtor (Sample: John Doe)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 201\", function () {",
+                  "    pm.response.to.have.status(201);",
+                  "});",
+                  "",
+                  "pm.test(\"Response has debtor ID\", function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData).to.have.property('id');",
+                  "    pm.collectionVariables.set('debtorId', jsonData.id);",
+                  "});",
+                  "",
+                  "pm.test(\"Response matches request\", function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    var requestData = JSON.parse(pm.request.body.raw);",
+                  "    pm.expect(jsonData.name).to.eql(requestData.name);",
+                  "    pm.expect(jsonData.accountNumber).to.eql(requestData.accountNumber);",
+                  "    pm.expect(jsonData.bankCode).to.eql(requestData.bankCode);",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
           "request": {
             "method": "POST",
             "header": [
@@ -576,61 +1130,7 @@
                 }
               }
             },
-            "description": "Create debtor using sample data. This matches the sample data in the database."
-          },
-          "url": {
-            "raw": "{{baseUrl}}/api/v1/debtors",
-            "host": ["{{baseUrl}}"],
-            "path": ["api", "v1", "debtors"]
-          }
-        },
-        {
-          "name": "Create Debtor (Sample: Jane Smith)",
-          "request": {
-            "method": "POST",
-            "header": [
-              {
-                "key": "Content-Type",
-                "value": "application/json"
-              }
-            ],
-            "body": {
-              "mode": "raw",
-              "raw": "{\n  \"name\": \"Jane Smith\",\n  \"accountNumber\": \"DEB002222222\",\n  \"bankCode\": \"BANK002\",\n  \"email\": \"jane.smith@email.com\",\n  \"address\": \"200 Oak Avenue, Seattle, WA 98101\"\n}",
-              "options": {
-                "raw": {
-                  "language": "json"
-                }
-              }
-            },
-            "description": "Create second sample debtor."
-          },
-          "url": {
-            "raw": "{{baseUrl}}/api/v1/debtors",
-            "host": ["{{baseUrl}}"],
-            "path": ["api", "v1", "debtors"]
-          }
-        },
-        {
-          "name": "Create Debtor (Sample: Robert Johnson)",
-          "request": {
-            "method": "POST",
-            "header": [
-              {
-                "key": "Content-Type",
-                "value": "application/json"
-              }
-            ],
-            "body": {
-              "mode": "raw",
-              "raw": "{\n  \"name\": \"Robert Johnson\",\n  \"accountNumber\": \"DEB003333333\",\n  \"bankCode\": \"BANK003\",\n  \"email\": \"robert.j@email.com\",\n  \"address\": \"300 Pine Road, Austin, TX 78701\"\n}",
-              "options": {
-                "raw": {
-                  "language": "json"
-                }
-              }
-            },
-            "description": "Create third sample debtor."
+            "description": "Create debtor using sample data. This matches the sample data in the database. Auto-extracts debtor ID to {{debtorId}} variable."
           },
           "url": {
             "raw": "{{baseUrl}}/api/v1/debtors",
@@ -640,6 +1140,35 @@
         },
         {
           "name": "Delete Debtor (Soft Delete)",
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "exec": [
+                  "// Ensure debtorId is set",
+                  "if (!pm.collectionVariables.get('debtorId')) {",
+                  "    console.log('Warning: debtorId variable not set. Run \"Get All Debtors\" first.');",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 204\", function () {",
+                  "    pm.response.to.have.status(204);",
+                  "});",
+                  "",
+                  "pm.test(\"Response body is empty\", function () {",
+                  "    pm.expect(pm.response.text()).to.be.empty;",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
           "request": {
             "method": "DELETE",
             "header": [],
@@ -647,7 +1176,8 @@
               "raw": "{{baseUrl}}/api/v1/debtors/{{debtorId}}",
               "host": ["{{baseUrl}}"],
               "path": ["api", "v1", "debtors", "{{debtorId}}"]
-            }
+            },
+            "description": "Soft delete a debtor by ID. Uses {{debtorId}} variable. After deletion, the debtor will not appear in list requests but can be recovered."
           }
         }
       ]
@@ -657,46 +1187,106 @@
       "item": [
         {
           "name": "Get Payment (English)",
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "exec": [
+                  "// Ensure paymentId is set",
+                  "if (!pm.collectionVariables.get('paymentId')) {",
+                  "    console.log('Warning: paymentId variable not set. Run \"Get All Payments\" first.');",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200 or 404\", function () {",
+                  "    pm.expect(pm.response.code).to.be.oneOf([200, 404]);",
+                  "});",
+                  "",
+                  "pm.test(\"Response has Accept-Language header effect\", function () {",
+                  "    // English error messages if 404",
+                  "    if (pm.response.code === 404) {",
+                  "        var jsonData = pm.response.json();",
+                  "        pm.expect(jsonData.message).to.be.a('string');",
+                  "    }",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
           "request": {
             "method": "GET",
             "header": [
               {
                 "key": "Accept-Language",
-                "value": "en"
+                "value": "en",
+                "description": "English language"
               }
             ],
             "url": {
-              "raw": "{{baseUrl}}/api/v1/payments/00000000-0000-0000-0000-000000000000",
+              "raw": "{{baseUrl}}/api/v1/payments/{{paymentId}}",
               "host": ["{{baseUrl}}"],
-              "path": [
-                "api",
-                "v1",
-                "payments",
-                "00000000-0000-0000-0000-000000000000"
-              ]
-            }
+              "path": ["api", "v1", "payments", "{{paymentId}}"]
+            },
+            "description": "Get payment with English language header. Uses {{paymentId}} variable."
           }
         },
         {
           "name": "Get Payment (Spanish)",
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "exec": [
+                  "// Ensure paymentId is set",
+                  "if (!pm.collectionVariables.get('paymentId')) {",
+                  "    console.log('Warning: paymentId variable not set. Run \"Get All Payments\" first.');",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200 or 404\", function () {",
+                  "    pm.expect(pm.response.code).to.be.oneOf([200, 404]);",
+                  "});",
+                  "",
+                  "pm.test(\"Response has Spanish language header effect\", function () {",
+                  "    // Spanish error messages if 404",
+                  "    if (pm.response.code === 404) {",
+                  "        var jsonData = pm.response.json();",
+                  "        pm.expect(jsonData.message).to.be.a('string');",
+                  "    }",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
           "request": {
             "method": "GET",
             "header": [
               {
                 "key": "Accept-Language",
-                "value": "es"
+                "value": "es",
+                "description": "Spanish language"
               }
             ],
             "url": {
-              "raw": "{{baseUrl}}/api/v1/payments/00000000-0000-0000-0000-000000000000",
+              "raw": "{{baseUrl}}/api/v1/payments/{{paymentId}}",
               "host": ["{{baseUrl}}"],
-              "path": [
-                "api",
-                "v1",
-                "payments",
-                "00000000-0000-0000-0000-000000000000"
-              ]
-            }
+              "path": ["api", "v1", "payments", "{{paymentId}}"]
+            },
+            "description": "Get payment with Spanish language header. Uses {{paymentId}} variable."
           }
         }
       ]
@@ -706,6 +1296,24 @@
       "item": [
         {
           "name": "Invalid Payment (Negative Amount)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 400\", function () {",
+                  "    pm.response.to.have.status(400);",
+                  "});",
+                  "",
+                  "pm.test(\"Response has error message\", function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData).to.have.property('message');",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
           "request": {
             "method": "POST",
             "header": [
@@ -716,17 +1324,41 @@
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"amount\": -10,\n  \"currency\": \"USD\",\n  \"status\": \"RECEIVED\"\n}"
+              "raw": "{\n  \"amount\": -10,\n  \"currency\": \"USD\",\n  \"status\": \"RECEIVED\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
             },
-            "url": {
-              "raw": "{{baseUrl}}/api/v1/payments",
-              "host": ["{{baseUrl}}"],
-              "path": ["api", "v1", "payments"]
-            }
+            "description": "Test validation: negative amount should return 400 Bad Request"
+          },
+          "url": {
+            "raw": "{{baseUrl}}/api/v1/payments",
+            "host": ["{{baseUrl}}"],
+            "path": ["api", "v1", "payments"]
           }
         },
         {
           "name": "Invalid Payment (Invalid Currency)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 400\", function () {",
+                  "    pm.response.to.have.status(400);",
+                  "});",
+                  "",
+                  "pm.test(\"Response has error message\", function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData).to.have.property('message');",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
           "request": {
             "method": "POST",
             "header": [
@@ -737,17 +1369,41 @@
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"amount\": 100.50,\n  \"currency\": \"INVALID\",\n  \"status\": \"RECEIVED\"\n}"
+              "raw": "{\n  \"amount\": 100.50,\n  \"currency\": \"INVALID\",\n  \"status\": \"RECEIVED\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
             },
-            "url": {
-              "raw": "{{baseUrl}}/api/v1/payments",
-              "host": ["{{baseUrl}}"],
-              "path": ["api", "v1", "payments"]
-            }
+            "description": "Test validation: invalid currency code should return 400 Bad Request"
+          },
+          "url": {
+            "raw": "{{baseUrl}}/api/v1/payments",
+            "host": ["{{baseUrl}}"],
+            "path": ["api", "v1", "payments"]
           }
         },
         {
           "name": "Invalid Payment (Invalid Status)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 400\", function () {",
+                  "    pm.response.to.have.status(400);",
+                  "});",
+                  "",
+                  "pm.test(\"Response has error message\", function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData).to.have.property('message');",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
           "request": {
             "method": "POST",
             "header": [
@@ -758,17 +1414,41 @@
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"amount\": 100.50,\n  \"currency\": \"USD\",\n  \"status\": \"INVALID_STATUS\"\n}"
+              "raw": "{\n  \"amount\": 100.50,\n  \"currency\": \"USD\",\n  \"status\": \"INVALID_STATUS\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
             },
-            "url": {
-              "raw": "{{baseUrl}}/api/v1/payments",
-              "host": ["{{baseUrl}}"],
-              "path": ["api", "v1", "payments"]
-            }
+            "description": "Test validation: invalid status should return 400 Bad Request"
+          },
+          "url": {
+            "raw": "{{baseUrl}}/api/v1/payments",
+            "host": ["{{baseUrl}}"],
+            "path": ["api", "v1", "payments"]
           }
         },
         {
           "name": "Invalid Creditor (Empty Fields)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 400\", function () {",
+                  "    pm.response.to.have.status(400);",
+                  "});",
+                  "",
+                  "pm.test(\"Response has error message\", function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData).to.have.property('message');",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
           "request": {
             "method": "POST",
             "header": [
@@ -779,13 +1459,19 @@
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"name\": \"\",\n  \"accountNumber\": \"\",\n  \"bankCode\": \"\"\n}"
+              "raw": "{\n  \"name\": \"\",\n  \"accountNumber\": \"\",\n  \"bankCode\": \"\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
             },
-            "url": {
-              "raw": "{{baseUrl}}/api/v1/creditors",
-              "host": ["{{baseUrl}}"],
-              "path": ["api", "v1", "creditors"]
-            }
+            "description": "Test validation: empty required fields should return 400 Bad Request"
+          },
+          "url": {
+            "raw": "{{baseUrl}}/api/v1/creditors",
+            "host": ["{{baseUrl}}"],
+            "path": ["api", "v1", "creditors"]
           }
         }
       ]
@@ -795,6 +1481,25 @@
       "item": [
         {
           "name": "Payment Not Found (404)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 404\", function () {",
+                  "    pm.response.to.have.status(404);",
+                  "});",
+                  "",
+                  "pm.test(\"Response has error message\", function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData).to.have.property('message');",
+                  "    pm.expect(jsonData.message).to.include('not found');",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
           "request": {
             "method": "GET",
             "header": [],
@@ -807,11 +1512,31 @@
                 "payments",
                 "00000000-0000-0000-0000-000000000000"
               ]
-            }
+            },
+            "description": "Test 404 error: non-existent payment ID should return 404 Not Found"
           }
         },
         {
           "name": "Creditor Not Found (404)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 404\", function () {",
+                  "    pm.response.to.have.status(404);",
+                  "});",
+                  "",
+                  "pm.test(\"Response has error message\", function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData).to.have.property('message');",
+                  "    pm.expect(jsonData.message).to.include('not found');",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
           "request": {
             "method": "GET",
             "header": [],
@@ -824,11 +1549,31 @@
                 "creditors",
                 "00000000-0000-0000-0000-000000000000"
               ]
-            }
+            },
+            "description": "Test 404 error: non-existent creditor ID should return 404 Not Found"
           }
         },
         {
           "name": "Debtor Not Found (404)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 404\", function () {",
+                  "    pm.response.to.have.status(404);",
+                  "});",
+                  "",
+                  "pm.test(\"Response has error message\", function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData).to.have.property('message');",
+                  "    pm.expect(jsonData.message).to.include('not found');",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
           "request": {
             "method": "GET",
             "header": [],
@@ -841,7 +1586,8 @@
                 "debtors",
                 "00000000-0000-0000-0000-000000000000"
               ]
-            }
+            },
+            "description": "Test 404 error: non-existent debtor ID should return 404 Not Found"
           }
         }
       ]
