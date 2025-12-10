@@ -74,10 +74,7 @@ class CreditorService(
     @Transactional(readOnly = true)
     fun findById(id: UUID): CreditorResponse {
         logger.debug("Finding creditor with id: {}", id)
-        val creditor = repo.findById(id).orElseThrow { CreditorNotFoundException(id) }
-        if (creditor.deletedAt != null) {
-            throw CreditorNotFoundException(id)
-        }
+        val creditor = repo.findByIdAndDeletedAtIsNull(id).orElseThrow { CreditorNotFoundException(id) }
         return mapper.toResponse(creditor)
     }
 
@@ -93,7 +90,7 @@ class CreditorService(
     @Transactional
     fun delete(id: UUID) {
         logger.info("Soft deleting creditor with id: {}", id)
-        val creditor = repo.findById(id).orElseThrow { CreditorNotFoundException(id) }
+        val creditor = repo.findByIdAndDeletedAtIsNull(id).orElseThrow { CreditorNotFoundException(id) }
         val deletedCreditor = creditor.copy(deletedAt = java.time.Instant.now())
         repo.save(deletedCreditor)
         logger.info("Creditor soft deleted with id: {}", id)

@@ -74,10 +74,7 @@ class DebtorService(
     @Transactional(readOnly = true)
     fun findById(id: UUID): DebtorResponse {
         logger.debug("Finding debtor with id: {}", id)
-        val debtor = repo.findById(id).orElseThrow { DebtorNotFoundException(id) }
-        if (debtor.deletedAt != null) {
-            throw DebtorNotFoundException(id)
-        }
+        val debtor = repo.findByIdAndDeletedAtIsNull(id).orElseThrow { DebtorNotFoundException(id) }
         return mapper.toResponse(debtor)
     }
 
@@ -93,7 +90,7 @@ class DebtorService(
     @Transactional
     fun delete(id: UUID) {
         logger.info("Soft deleting debtor with id: {}", id)
-        val debtor = repo.findById(id).orElseThrow { DebtorNotFoundException(id) }
+        val debtor = repo.findByIdAndDeletedAtIsNull(id).orElseThrow { DebtorNotFoundException(id) }
         val deletedDebtor = debtor.copy(deletedAt = java.time.Instant.now())
         repo.save(deletedDebtor)
         logger.info("Debtor soft deleted with id: {}", id)

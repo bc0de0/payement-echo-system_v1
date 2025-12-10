@@ -107,10 +107,7 @@ class PaymentService(
     @Transactional(readOnly = true)
     fun findById(id: UUID): PaymentResponse {
         logger.debug("Finding payment with id: {}", id)
-        val payment = repo.findById(id).orElseThrow { PaymentNotFoundException(id) }
-        if (payment.deletedAt != null) {
-            throw PaymentNotFoundException(id)
-        }
+        val payment = repo.findByIdAndDeletedAtIsNull(id).orElseThrow { PaymentNotFoundException(id) }
         return mapper.toResponse(payment)
     }
 
@@ -119,11 +116,11 @@ class PaymentService(
         logger.info("Creating payment with amount: {}, currency: {}, status: {}", request.amount, request.currency, request.status)
         
         val creditor = request.creditorId?.let {
-            creditorRepository.findById(it).orElseThrow { CreditorNotFoundException(it) }
+            creditorRepository.findByIdAndDeletedAtIsNull(it).orElseThrow { CreditorNotFoundException(it) }
         }
         
         val debtor = request.debtorId?.let {
-            debtorRepository.findById(it).orElseThrow { DebtorNotFoundException(it) }
+            debtorRepository.findByIdAndDeletedAtIsNull(it).orElseThrow { DebtorNotFoundException(it) }
         }
         
         val payment = mapper.toEntity(request, creditor, debtor)
@@ -137,11 +134,11 @@ class PaymentService(
         logger.info("Echoing payment with amount: {}, currency: {}, status: {}", request.amount, request.currency, request.status)
         
         val creditor = request.creditorId?.let {
-            creditorRepository.findById(it).orElseThrow { CreditorNotFoundException(it) }
+            creditorRepository.findByIdAndDeletedAtIsNull(it).orElseThrow { CreditorNotFoundException(it) }
         }
         
         val debtor = request.debtorId?.let {
-            debtorRepository.findById(it).orElseThrow { DebtorNotFoundException(it) }
+            debtorRepository.findByIdAndDeletedAtIsNull(it).orElseThrow { DebtorNotFoundException(it) }
         }
         
         val payment = mapper.toEntity(request, creditor, debtor)
