@@ -1,34 +1,39 @@
 ﻿package com.example.paymentecho.controller
 
-import com.example.paymentecho.entity.Payment
+import com.example.paymentecho.dto.PaymentRequest
+import com.example.paymentecho.dto.PaymentResponse
 import com.example.paymentecho.service.PaymentService
-import org.springframework.http.HttpStatus
+import jakarta.validation.Valid
 import org.springframework.http.ResponseEntity
+import org.springframework.validation.annotation.Validated
 import org.springframework.web.bind.annotation.*
 import java.net.URI
 import java.util.*
 
+/**
+ * Payment REST controller.
+ * - Controllers should be small: validate request, call service, map/return response.
+ * - Keep controller free of business logic.
+ */
 @RestController
 @RequestMapping("/api/payments")
+@Validated
 class PaymentController(private val service: PaymentService) {
 
     @GetMapping
-    fun all() = service.findAll()
+    fun all(): List<PaymentResponse> = service.findAll()
 
     @GetMapping("/{id}")
-    fun getById(@PathVariable id: UUID): ResponseEntity<Payment> {
-        val p = service.findById(id)
-        return if (p != null) ResponseEntity.ok(p) else ResponseEntity.notFound().build()
-    }
+    fun getById(@PathVariable id: UUID): ResponseEntity<PaymentResponse> =
+        ResponseEntity.ok(service.findById(id))
 
     @PostMapping
-    fun create(@RequestBody payment: Payment): ResponseEntity.BodyBuilder {
-        val created = service.create(payment)
-        return ResponseEntity.status(HttpStatus.CREATED)
+    fun create(@Valid @RequestBody req: PaymentRequest): ResponseEntity<PaymentResponse> {
+        val created = service.create(req)
+        return ResponseEntity.created(URI.create("/api/payments/${created.id}")).body(created)
     }
 
     @PostMapping("/echo")
-    fun echo(@RequestBody payment: Payment): ResponseEntity<Payment> {
-        return ResponseEntity.ok(service.echo(payment))
-    }
+    fun echo(@Valid @RequestBody req: PaymentRequest): ResponseEntity<PaymentResponse> =
+        ResponseEntity.ok(service.echo(req))
 }
