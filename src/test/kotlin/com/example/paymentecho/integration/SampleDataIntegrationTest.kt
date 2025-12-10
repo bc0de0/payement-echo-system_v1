@@ -18,6 +18,7 @@ import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.*
 import org.springframework.transaction.annotation.Transactional
+import org.hamcrest.Matchers
 
 @SpringBootTest
 @AutoConfigureMockMvc
@@ -112,7 +113,7 @@ class SampleDataIntegrationTest @Autowired constructor(
         mockMvc.perform(get("/api/v1/payments?status=RECEIVED"))
             .andExpect(status().isOk)
             .andExpect(jsonPath("$.payments").isArray)
-            .andExpect(jsonPath("$.payments[*].status").value(org.hamcrest.Matchers.everyItem(org.hamcrest.Matchers.equalTo("RECEIVED"))))
+            .andExpect(jsonPath("$.payments[*].status").value(Matchers.everyItem(Matchers.equalTo("RECEIVED"))))
     }
 
     @Test
@@ -121,7 +122,7 @@ class SampleDataIntegrationTest @Autowired constructor(
         mockMvc.perform(get("/api/v1/payments?currency=USD"))
             .andExpect(status().isOk)
             .andExpect(jsonPath("$.payments").isArray)
-            .andExpect(jsonPath("$.payments[*].currency").value(org.hamcrest.Matchers.everyItem(org.hamcrest.Matchers.equalTo("USD"))))
+            .andExpect(jsonPath("$.payments[*].currency").value(Matchers.everyItem(Matchers.equalTo("USD"))))
     }
 
     @Test
@@ -218,8 +219,8 @@ class SampleDataIntegrationTest @Autowired constructor(
 
         mockMvc.perform(get("/api/v1/payments?page=0&size=3"))
             .andExpect(status().isOk)
-            .andExpect(jsonPath("$.total").value(org.hamcrest.Matchers.greaterThanOrEqualTo(3)))
-            .andExpect(jsonPath("$.payments.length()").value(org.hamcrest.Matchers.lessThanOrEqualTo(3)))
+            .andExpect(jsonPath("$.total").value(Matchers.greaterThanOrEqualTo(3)))
+            .andExpect(jsonPath("$.payments.length()").value(Matchers.lessThanOrEqualTo(3)))
     }
 
     @Test

@@ -32,7 +32,11 @@ class DataInitializer(
     @PostConstruct
     fun initializeSampleData() {
         // Only initialize if database is empty
-        if (paymentRepository.count() > 0 || creditorRepository.count() > 0 || debtorRepository.count() > 0) {
+        val paymentCount = paymentRepository.findAll().size
+        val creditorCount = creditorRepository.findAll().size
+        val debtorCount = debtorRepository.findAll().size
+        
+        if (paymentCount > 0 || creditorCount > 0 || debtorCount > 0) {
             logger.info("Database already contains data. Skipping sample data initialization.")
             return
         }
