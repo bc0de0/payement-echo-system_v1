@@ -39,24 +39,13 @@ class GraphQLIntegrationTest @Autowired constructor(
         // Create test payment
         paymentService.create(PaymentCreateRequest(100.0, "USD", "RECEIVED"))
 
-        val query = """
-            query {
-                payments {
-                    payments {
-                        id
-                        amount
-                        currency
-                        status
-                    }
-                    total
-                }
-            }
-        """.trimIndent()
+        val query = "query { payments { payments { id amount currency status } total } }"
+        val requestBody = objectMapper.writeValueAsString(mapOf("query" to query))
 
         mockMvc.perform(
             post("/graphql")
                 .contentType(MediaType.APPLICATION_JSON)
-                .content("{\"query\": \"$query\"}")
+                .content(requestBody)
         )
             .andExpect(status().isOk)
             .andExpect(jsonPath("$.data.payments.payments").isArray)
@@ -68,21 +57,13 @@ class GraphQLIntegrationTest @Autowired constructor(
     fun `should query payment by id via graphql`() {
         val payment = paymentService.create(PaymentCreateRequest(200.0, "EUR", "PROCESSING"))
 
-        val query = """
-            query {
-                payment(id: "${payment.id}") {
-                    id
-                    amount
-                    currency
-                    status
-                }
-            }
-        """.trimIndent()
+        val query = "query { payment(id: \"${payment.id}\") { id amount currency status } }"
+        val requestBody = objectMapper.writeValueAsString(mapOf("query" to query))
 
         mockMvc.perform(
             post("/graphql")
                 .contentType(MediaType.APPLICATION_JSON)
-                .content("{\"query\": \"$query\"}")
+                .content(requestBody)
         )
             .andExpect(status().isOk)
             .andExpect(jsonPath("$.data.payment.id").value(payment.id.toString()))
@@ -96,21 +77,13 @@ class GraphQLIntegrationTest @Autowired constructor(
         paymentService.create(PaymentCreateRequest(100.0, "USD", "RECEIVED"))
         paymentService.create(PaymentCreateRequest(200.0, "USD", "PROCESSING"))
 
-        val query = """
-            query {
-                paymentsByStatus(status: "RECEIVED") {
-                    payments {
-                        status
-                    }
-                    total
-                }
-            }
-        """.trimIndent()
+        val query = "query { paymentsByStatus(status: \"RECEIVED\") { payments { status } total } }"
+        val requestBody = objectMapper.writeValueAsString(mapOf("query" to query))
 
         mockMvc.perform(
             post("/graphql")
                 .contentType(MediaType.APPLICATION_JSON)
-                .content("{\"query\": \"$query\"}")
+                .content(requestBody)
         )
             .andExpect(status().isOk)
             .andExpect(jsonPath("$.data.paymentsByStatus.total").value(1))
@@ -120,25 +93,13 @@ class GraphQLIntegrationTest @Autowired constructor(
     @Test
     @DisplayName("Should create payment via GraphQL mutation")
     fun `should create payment via graphql mutation`() {
-        val mutation = """
-            mutation {
-                createPayment(input: {
-                    amount: 150.0
-                    currency: "USD"
-                    status: "RECEIVED"
-                }) {
-                    id
-                    amount
-                    currency
-                    status
-                }
-            }
-        """.trimIndent()
+        val mutation = "mutation { createPayment(input: { amount: 150.0 currency: \"USD\" status: \"RECEIVED\" }) { id amount currency status } }"
+        val requestBody = objectMapper.writeValueAsString(mapOf("query" to mutation))
 
         mockMvc.perform(
             post("/graphql")
                 .contentType(MediaType.APPLICATION_JSON)
-                .content("{\"query\": \"$mutation\"}")
+                .content(requestBody)
         )
             .andExpect(status().isOk)
             .andExpect(jsonPath("$.data.createPayment.id").exists())
@@ -150,24 +111,13 @@ class GraphQLIntegrationTest @Autowired constructor(
     @Test
     @DisplayName("Should query creditors via GraphQL")
     fun `should query creditors via graphql`() {
-        val query = """
-            query {
-                creditors {
-                    creditors {
-                        id
-                        name
-                        accountNumber
-                        bankCode
-                    }
-                    total
-                }
-            }
-        """.trimIndent()
+        val query = "query { creditors { creditors { id name accountNumber bankCode } total } }"
+        val requestBody = objectMapper.writeValueAsString(mapOf("query" to query))
 
         mockMvc.perform(
             post("/graphql")
                 .contentType(MediaType.APPLICATION_JSON)
-                .content("{\"query\": \"$query\"}")
+                .content(requestBody)
         )
             .andExpect(status().isOk)
             .andExpect(jsonPath("$.data.creditors").exists())
@@ -177,24 +127,13 @@ class GraphQLIntegrationTest @Autowired constructor(
     @Test
     @DisplayName("Should query debtors via GraphQL")
     fun `should query debtors via graphql`() {
-        val query = """
-            query {
-                debtors {
-                    debtors {
-                        id
-                        name
-                        accountNumber
-                        bankCode
-                    }
-                    total
-                }
-            }
-        """.trimIndent()
+        val query = "query { debtors { debtors { id name accountNumber bankCode } total } }"
+        val requestBody = objectMapper.writeValueAsString(mapOf("query" to query))
 
         mockMvc.perform(
             post("/graphql")
                 .contentType(MediaType.APPLICATION_JSON)
-                .content("{\"query\": \"$query\"}")
+                .content(requestBody)
         )
             .andExpect(status().isOk)
             .andExpect(jsonPath("$.data.debtors").exists())
