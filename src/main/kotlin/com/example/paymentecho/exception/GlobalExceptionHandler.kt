@@ -1,0 +1,185 @@
+package com.example.paymentecho.exception
+
+import com.example.paymentecho.dto.response.ErrorResponse
+import com.example.paymentecho.dto.response.ValidationErrorResponse
+import jakarta.servlet.http.HttpServletRequest
+import org.slf4j.LoggerFactory
+import org.springframework.context.MessageSource
+import org.springframework.http.HttpStatus
+import org.springframework.http.ResponseEntity
+import org.springframework.web.bind.MethodArgumentNotValidException
+import org.springframework.web.bind.annotation.ExceptionHandler
+import org.springframework.web.bind.annotation.RestControllerAdvice
+import org.springframework.web.context.request.WebRequest
+import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException
+import org.springframework.web.servlet.LocaleResolver
+import java.time.Instant
+import java.util.*
+
+@RestControllerAdvice
+class GlobalExceptionHandler(
+    private val messageSource: MessageSource,
+    private val localeResolver: LocaleResolver
+) {
+
+    private val logger = LoggerFactory.getLogger(GlobalExceptionHandler::class.java)
+    
+    private fun getLocale(request: WebRequest): Locale {
+        return if (request is HttpServletRequest) {
+            localeResolver.resolveLocale(request)
+        } else {
+            Locale.getDefault()
+        }
+    }
+
+    @ExceptionHandler(PaymentNotFoundException::class)
+    fun handlePaymentNotFoundException(ex: PaymentNotFoundException, request: WebRequest): ResponseEntity<ErrorResponse> {
+        logger.error("Payment not found: {}", ex.message)
+        val locale = getLocale(request)
+        val message = messageSource.getMessage(
+            "payment.not.found",
+            arrayOf(ex.id.toString()),
+            "Payment not found with id: ${ex.id}",
+            locale
+        ) ?: "Payment not found with id: ${ex.id}"
+        val errorMessage = messageSource.getMessage("error.not.found", null, "Not Found", locale) ?: "Not Found"
+        
+        val errorResponse = ErrorResponse(
+            timestamp = Instant.now(),
+            status = HttpStatus.NOT_FOUND.value(),
+            error = errorMessage,
+            message = message,
+            path = request.getDescription(false).replace("uri=", "")
+        )
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorResponse)
+    }
+
+    @ExceptionHandler(CreditorNotFoundException::class)
+    fun handleCreditorNotFoundException(ex: CreditorNotFoundException, request: WebRequest): ResponseEntity<ErrorResponse> {
+        logger.error("Creditor not found: {}", ex.message)
+        val locale = getLocale(request)
+        val message = messageSource.getMessage(
+            "creditor.not.found",
+            arrayOf(ex.id.toString()),
+            "Creditor not found with id: ${ex.id}",
+            locale
+        ) ?: "Creditor not found with id: ${ex.id}"
+        val errorMessage = messageSource.getMessage("error.not.found", null, "Not Found", locale) ?: "Not Found"
+        
+        val errorResponse = ErrorResponse(
+            timestamp = Instant.now(),
+            status = HttpStatus.NOT_FOUND.value(),
+            error = errorMessage,
+            message = message,
+            path = request.getDescription(false).replace("uri=", "")
+        )
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorResponse)
+    }
+
+    @ExceptionHandler(DebtorNotFoundException::class)
+    fun handleDebtorNotFoundException(ex: DebtorNotFoundException, request: WebRequest): ResponseEntity<ErrorResponse> {
+        logger.error("Debtor not found: {}", ex.message)
+        val locale = getLocale(request)
+        val message = messageSource.getMessage(
+            "debtor.not.found",
+            arrayOf(ex.id.toString()),
+            "Debtor not found with id: ${ex.id}",
+            locale
+        ) ?: "Debtor not found with id: ${ex.id}"
+        val errorMessage = messageSource.getMessage("error.not.found", null, "Not Found", locale) ?: "Not Found"
+        
+        val errorResponse = ErrorResponse(
+            timestamp = Instant.now(),
+            status = HttpStatus.NOT_FOUND.value(),
+            error = errorMessage,
+            message = message,
+            path = request.getDescription(false).replace("uri=", "")
+        )
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorResponse)
+    }
+
+    @ExceptionHandler(InvalidPaymentException::class)
+    fun handleInvalidPaymentException(ex: InvalidPaymentException, request: WebRequest): ResponseEntity<ErrorResponse> {
+        logger.error("Invalid payment: {}", ex.message)
+        val errorResponse = ErrorResponse(
+            timestamp = Instant.now(),
+            status = HttpStatus.BAD_REQUEST.value(),
+            error = "Bad Request",
+            message = ex.message ?: "Invalid payment",
+            path = request.getDescription(false).replace("uri=", "")
+        )
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse)
+    }
+
+    @ExceptionHandler(MethodArgumentNotValidException::class)
+    fun handleValidationException(ex: MethodArgumentNotValidException, request: WebRequest): ResponseEntity<ValidationErrorResponse> {
+        logger.error("Validation failed: {}", ex.bindingResult)
+        val locale = getLocale(request)
+        
+        val fieldErrors = ex.bindingResult.fieldErrors.associate { fieldError ->
+            val message = fieldError.defaultMessage ?: (messageSource.getMessage(
+                "validation.required",
+                null,
+                "Invalid value",
+                locale
+            ) ?: "Invalid value")
+            fieldError.field to message
+        }
+        
+        val errorMessage = messageSource.getMessage("error.validation.failed", null, "Validation Failed", locale) ?: "Validation Failed"
+        val message = messageSource.getMessage("error.validation.failed", null, "Request validation failed", locale) ?: "Request validation failed"
+        
+        val errorResponse = ValidationErrorResponse(
+            timestamp = Instant.now(),
+            status = HttpStatus.BAD_REQUEST.value(),
+            error = errorMessage,
+            message = message,
+            path = request.getDescription(false).replace("uri=", ""),
+            fieldErrors = fieldErrors
+        )
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse)
+    }
+
+    @ExceptionHandler(MethodArgumentTypeMismatchException::class)
+    fun handleTypeMismatchException(ex: MethodArgumentTypeMismatchException, request: WebRequest): ResponseEntity<ErrorResponse> {
+        logger.error("Type mismatch: {}", ex.message)
+        val errorResponse = ErrorResponse(
+            timestamp = Instant.now(),
+            status = HttpStatus.BAD_REQUEST.value(),
+            error = "Bad Request",
+            message = "Invalid parameter type: ${ex.name}",
+            path = request.getDescription(false).replace("uri=", "")
+        )
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse)
+    }
+
+    @ExceptionHandler(IllegalArgumentException::class)
+    fun handleIllegalArgumentException(ex: IllegalArgumentException, request: WebRequest): ResponseEntity<ErrorResponse> {
+        logger.error("Illegal argument: {}", ex.message)
+        val errorResponse = ErrorResponse(
+            timestamp = Instant.now(),
+            status = HttpStatus.BAD_REQUEST.value(),
+            error = "Bad Request",
+            message = ex.message ?: "Invalid argument",
+            path = request.getDescription(false).replace("uri=", "")
+        )
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse)
+    }
+
+    @ExceptionHandler(Exception::class)
+    fun handleGenericException(ex: Exception, request: WebRequest): ResponseEntity<ErrorResponse> {
+        logger.error("Unexpected error: ", ex)
+        val locale = getLocale(request)
+        val errorMessage = messageSource.getMessage("error.internal.server", null, "Internal Server Error", locale) ?: "Internal Server Error"
+        val message = messageSource.getMessage("error.internal.server", null, "An unexpected error occurred while processing your request", locale) ?: "An unexpected error occurred while processing your request"
+        
+        val errorResponse = ErrorResponse(
+            timestamp = Instant.now(),
+            status = HttpStatus.INTERNAL_SERVER_ERROR.value(),
+            error = errorMessage,
+            message = message,
+            path = request.getDescription(false).replace("uri=", "")
+        )
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorResponse)
+    }
+}
