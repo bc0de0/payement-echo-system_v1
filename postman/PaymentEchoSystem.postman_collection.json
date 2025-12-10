@@ -1,161 +1,177 @@
 {
-	"info": {
-		"_postman_id": "payment-echo-system-v1",
-		"name": "Payment Echo System API v1",
-		"description": "Complete API collection for Payment Echo System with filtering, pagination, and i18n support",
-		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
-		"_exporter_id": "payment-echo-system"
-	},
-	"item": [
-		{
-			"name": "Health & Info",
-			"item": [
-				{
-					"name": "Health Check",
-					"request": {
-						"method": "GET",
-						"header": [],
-						"url": {
-							"raw": "{{baseUrl}}/actuator/health",
-							"host": ["{{baseUrl}}"],
-							"path": ["actuator", "health"]
-						}
-					}
-				},
-				{
-					"name": "Application Info",
-					"request": {
-						"method": "GET",
-						"header": [],
-						"url": {
-							"raw": "{{baseUrl}}/actuator/info",
-							"host": ["{{baseUrl}}"],
-							"path": ["actuator", "info"]
-						}
-					}
-				},
-				{
-					"name": "Metrics",
-					"request": {
-						"method": "GET",
-						"header": [],
-						"url": {
-							"raw": "{{baseUrl}}/actuator/metrics",
-							"host": ["{{baseUrl}}"],
-							"path": ["actuator", "metrics"]
-						}
-					}
-				}
-			]
-		},
-		{
-			"name": "Payments",
-			"item": [
-				{
-					"name": "Get All Payments",
-					"request": {
-						"method": "GET",
-						"header": [],
-						"url": {
-							"raw": "{{baseUrl}}/api/v1/payments?page=0&size=20",
-							"host": ["{{baseUrl}}"],
-							"path": ["api", "v1", "payments"],
-							"query": [
-								{
-									"key": "page",
-									"value": "0"
-								},
-								{
-									"key": "size",
-									"value": "20"
-								}
-							]
-						}
-					}
-				},
-				{
-					"name": "Get Payments with Filters (Sample: USD RECEIVED)",
-					"request": {
-						"method": "GET",
-						"header": [],
-						"url": {
-							"raw": "{{baseUrl}}/api/v1/payments?status=RECEIVED&currency=USD&minAmount=100&maxAmount=2000&page=0&size=20",
-							"host": ["{{baseUrl}}"],
-							"path": ["api", "v1", "payments"],
-							"query": [
-								{
-									"key": "status",
-									"value": "RECEIVED",
-									"description": "Filter by status. Sample data includes: RECEIVED, PROCESSING, COMPLETED, FAILED"
-								},
-								{
-									"key": "currency",
-									"value": "USD",
-									"description": "Filter by currency. Sample data includes: USD, EUR, GBP"
-								},
-								{
-									"key": "minAmount",
-									"value": "100",
-									"description": "Minimum amount filter"
-								},
-								{
-									"key": "maxAmount",
-									"value": "2000",
-									"description": "Maximum amount filter"
-								},
-								{
-									"key": "page",
-									"value": "0"
-								},
-								{
-									"key": "size",
-									"value": "20"
-								}
-							]
-						},
-						"description": "Filter payments by status and currency. Sample data includes payments with amounts: 1500.00 USD, 500.00 USD, 1000.00 USD (RECEIVED)"
-					}
-				},
-				{
-					"name": "Get Payments Sorted",
-					"request": {
-						"method": "GET",
-						"header": [],
-						"url": {
-							"raw": "{{baseUrl}}/api/v1/payments?page=0&size=20&sort=amount,desc",
-							"host": ["{{baseUrl}}"],
-							"path": ["api", "v1", "payments"],
-							"query": [
-								{
-									"key": "page",
-									"value": "0"
-								},
-								{
-									"key": "size",
-									"value": "20"
-								},
-								{
-									"key": "sort",
-									"value": "amount,desc"
-								}
-							]
-						}
-					}
-				},
-				{
-					"name": "Get Payment by ID",
-					"request": {
-						"method": "GET",
-						"header": [],
-						"url": {
-							"raw": "{{baseUrl}}/api/v1/payments/{{paymentId}}",
-							"host": ["{{baseUrl}}"],
-							"path": ["api", "v1", "payments", "{{paymentId}}"]
-						}
-					}
-				},
+  "info": {
+    "_postman_id": "payment-echo-system-v1",
+    "name": "Payment Echo System API v1",
+    "description": "Complete API collection for Payment Echo System with filtering, pagination, and i18n support",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_exporter_id": "payment-echo-system"
+  },
+  "item": [
+    {
+      "name": "Health & Info",
+      "item": [
+        {
+          "name": "Health Check",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/actuator/health",
+              "host": ["{{baseUrl}}"],
+              "path": ["actuator", "health"]
+            }
+          }
+        },
+        {
+          "name": "Application Info",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/actuator/info",
+              "host": ["{{baseUrl}}"],
+              "path": ["actuator", "info"]
+            }
+          }
+        },
+        {
+          "name": "Metrics",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/actuator/metrics",
+              "host": ["{{baseUrl}}"],
+              "path": ["actuator", "metrics"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Payments",
+      "item": [
+        {
+          "name": "Get All Payments",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/payments?page=0&size=20",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "payments"],
+              "query": [
+                {
+                  "key": "page",
+                  "value": "0"
+                },
+                {
+                  "key": "size",
+                  "value": "20"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Get Payments with Filters (Sample: USD RECEIVED)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/payments?status=RECEIVED&currency=USD&minAmount=100&maxAmount=2000&page=0&size=20",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "payments"],
+              "query": [
+                {
+                  "key": "status",
+                  "value": "RECEIVED",
+                  "description": "Filter by status. Sample data includes: RECEIVED, PROCESSING, COMPLETED, FAILED"
+                },
+                {
+                  "key": "currency",
+                  "value": "USD",
+                  "description": "Filter by currency. Sample data includes: USD, EUR, GBP"
+                },
+                {
+                  "key": "minAmount",
+                  "value": "100",
+                  "description": "Minimum amount filter"
+                },
+                {
+                  "key": "maxAmount",
+                  "value": "2000",
+                  "description": "Maximum amount filter"
+                },
+                {
+                  "key": "page",
+                  "value": "0"
+                },
+                {
+                  "key": "size",
+                  "value": "20"
+                }
+              ]
+            },
+            "description": "Filter payments by status and currency. Sample data includes payments with amounts: 1500.00 USD, 500.00 USD, 1000.00 USD (RECEIVED)"
+          }
+        },
+        {
+          "name": "Get Payments Sorted",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/payments?page=0&size=20&sort=amount,desc",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "payments"],
+              "query": [
+                {
+                  "key": "page",
+                  "value": "0"
+                },
+                {
+                  "key": "size",
+                  "value": "20"
+                },
+                {
+                  "key": "sort",
+                  "value": "amount,desc"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Get Payment by ID",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/payments/{{paymentId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "payments", "{{paymentId}}"]
+            }
+          }
+        },
 				{
 					"name": "Create Payment (Sample: USD RECEIVED)",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"// IMPORTANT: Set creditorId and debtorId variables first!",
+									"// 1. Run 'Get All Creditors' request and copy an 'id' from response",
+									"// 2. Set {{creditorId}} variable: pm.collectionVariables.set('creditorId', 'paste-id-here')",
+									"// 3. Run 'Get All Debtors' request and copy an 'id' from response",
+									"// 4. Set {{debtorId}} variable: pm.collectionVariables.set('debtorId', 'paste-id-here')",
+									"// Or use standalone payment request below which doesn't need IDs"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
 					"request": {
 						"method": "POST",
 						"header": [
@@ -173,7 +189,7 @@
 								}
 							}
 						},
-						"description": "Create payment with creditor and debtor. Use IDs from Get All Creditors/Debtors endpoints.\nSample data: amount=1500.00, currency=USD, status=RECEIVED"
+						"description": "⚠️ IMPORTANT: Before running this request:\n1. Run 'Get All Creditors' and copy an 'id' value\n2. Set {{creditorId}} variable in Postman (Collection Variables)\n3. Run 'Get All Debtors' and copy an 'id' value\n4. Set {{debtorId}} variable in Postman\n\nOr use 'Create Payment (Standalone)' request below which doesn't require IDs.\n\nSample data: amount=1500.00, currency=USD, status=RECEIVED"
 					},
 					"url": {
 						"raw": "{{baseUrl}}/api/v1/payments",
@@ -200,7 +216,7 @@
 								}
 							}
 						},
-						"description": "Create payment with EUR currency. Sample data: amount=2500.50, currency=EUR, status=PROCESSING"
+						"description": "⚠️ Requires {{creditorId}} and {{debtorId}} variables. Set them first using 'Get All Creditors' and 'Get All Debtors'.\n\nSample data: amount=2500.50, currency=EUR, status=PROCESSING"
 					},
 					"url": {
 						"raw": "{{baseUrl}}/api/v1/payments",
@@ -208,624 +224,649 @@
 						"path": ["api", "v1", "payments"]
 					}
 				},
-				{
-					"name": "Create Payment (Standalone - No Creditor/Debtor)",
-					"request": {
-						"method": "POST",
-						"header": [
-							{
-								"key": "Content-Type",
-								"value": "application/json"
-							}
-						],
-						"body": {
-							"mode": "raw",
-							"raw": "{\n  \"amount\": 1000.00,\n  \"currency\": \"USD\",\n  \"status\": \"RECEIVED\"\n}",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
-						},
-						"description": "Create standalone payment without creditor/debtor. Sample data: amount=1000.00, currency=USD, status=RECEIVED"
-					},
-					"url": {
-						"raw": "{{baseUrl}}/api/v1/payments",
-						"host": ["{{baseUrl}}"],
-						"path": ["api", "v1", "payments"]
-					}
-				},
-				{
-					"name": "Echo Payment (Sample)",
-					"request": {
-						"method": "POST",
-						"header": [
-							{
-								"key": "Content-Type",
-								"value": "application/json"
-							}
-						],
-						"body": {
-							"mode": "raw",
-							"raw": "{\n  \"amount\": 2000.00,\n  \"currency\": \"EUR\",\n  \"status\": \"PROCESSING\"\n}",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
-						},
-						"description": "Echo payment - returns and saves the payment. Sample data: amount=2000.00, currency=EUR, status=PROCESSING"
-					},
-					"url": {
-						"raw": "{{baseUrl}}/api/v1/payments/echo",
-						"host": ["{{baseUrl}}"],
-						"path": ["api", "v1", "payments", "echo"]
-					}
-				}
-			]
-		},
-		{
-			"name": "Creditors",
-			"item": [
-				{
-					"name": "Get All Creditors",
-					"request": {
-						"method": "GET",
-						"header": [],
-						"url": {
-							"raw": "{{baseUrl}}/api/v1/creditors?page=0&size=20",
-							"host": ["{{baseUrl}}"],
-							"path": ["api", "v1", "creditors"],
-							"query": [
-								{
-									"key": "page",
-									"value": "0"
-								},
-								{
-									"key": "size",
-									"value": "20"
-								}
-							]
-						}
-					}
-				},
-				{
-					"name": "Get Creditors Filtered by Name (Sample: Acme)",
-					"request": {
-						"method": "GET",
-						"header": [],
-						"url": {
-							"raw": "{{baseUrl}}/api/v1/creditors?name=Acme&page=0&size=20",
-							"host": ["{{baseUrl}}"],
-							"path": ["api", "v1", "creditors"],
-							"query": [
-								{
-									"key": "name",
-									"value": "Acme",
-									"description": "Filter by name (partial match). Sample: 'Acme' finds 'Acme Corporation'"
-								},
-								{
-									"key": "page",
-									"value": "0"
-								},
-								{
-									"key": "size",
-									"value": "20"
-								}
-							]
-						},
-						"description": "Filter creditors by name. Sample data includes 'Acme Corporation', 'Tech Solutions Inc', 'Global Services Ltd'"
-					}
-				},
-				{
-					"name": "Get Creditors Filtered by Bank Code",
-					"request": {
-						"method": "GET",
-						"header": [],
-						"url": {
-							"raw": "{{baseUrl}}/api/v1/creditors?bankCode=BANK001&page=0&size=20",
-							"host": ["{{baseUrl}}"],
-							"path": ["api", "v1", "creditors"],
-							"query": [
-								{
-									"key": "bankCode",
-									"value": "BANK001"
-								},
-								{
-									"key": "page",
-									"value": "0"
-								},
-								{
-									"key": "size",
-									"value": "20"
-								}
-							]
-						}
-					}
-				},
-				{
-					"name": "Get Creditor by ID",
-					"request": {
-						"method": "GET",
-						"header": [],
-						"url": {
-							"raw": "{{baseUrl}}/api/v1/creditors/{{creditorId}}",
-							"host": ["{{baseUrl}}"],
-							"path": ["api", "v1", "creditors", "{{creditorId}}"]
-						}
-					}
-				},
-				{
-					"name": "Create Creditor (Sample: Acme Corporation)",
-					"request": {
-						"method": "POST",
-						"header": [
-							{
-								"key": "Content-Type",
-								"value": "application/json"
-							}
-						],
-						"body": {
-							"mode": "raw",
-							"raw": "{\n  \"name\": \"Acme Corporation\",\n  \"accountNumber\": \"ACC001234567\",\n  \"bankCode\": \"BANK001\",\n  \"email\": \"finance@acme.com\",\n  \"address\": \"123 Business Street, New York, NY 10001\"\n}",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
-						},
-						"description": "Create creditor using sample data. This matches the sample data in the database."
-					},
-					"url": {
-						"raw": "{{baseUrl}}/api/v1/creditors",
-						"host": ["{{baseUrl}}"],
-						"path": ["api", "v1", "creditors"]
-					}
-				},
-				{
-					"name": "Create Creditor (Sample: Tech Solutions Inc)",
-					"request": {
-						"method": "POST",
-						"header": [
-							{
-								"key": "Content-Type",
-								"value": "application/json"
-							}
-						],
-						"body": {
-							"mode": "raw",
-							"raw": "{\n  \"name\": \"Tech Solutions Inc\",\n  \"accountNumber\": \"ACC002345678\",\n  \"bankCode\": \"BANK002\",\n  \"email\": \"payments@techsolutions.com\",\n  \"address\": \"456 Tech Avenue, San Francisco, CA 94102\"\n}",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
-						},
-						"description": "Create second sample creditor."
-					},
-					"url": {
-						"raw": "{{baseUrl}}/api/v1/creditors",
-						"host": ["{{baseUrl}}"],
-						"path": ["api", "v1", "creditors"]
-					}
-				},
-				{
-					"name": "Create Creditor (Sample: Global Services Ltd)",
-					"request": {
-						"method": "POST",
-						"header": [
-							{
-								"key": "Content-Type",
-								"value": "application/json"
-							}
-						],
-						"body": {
-							"mode": "raw",
-							"raw": "{\n  \"name\": \"Global Services Ltd\",\n  \"accountNumber\": \"ACC003456789\",\n  \"bankCode\": \"BANK003\",\n  \"email\": \"accounts@globalservices.com\",\n  \"address\": \"789 Global Plaza, London, UK\"\n}",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
-						},
-						"description": "Create third sample creditor."
-					},
-					"url": {
-						"raw": "{{baseUrl}}/api/v1/creditors",
-						"host": ["{{baseUrl}}"],
-						"path": ["api", "v1", "creditors"]
-					}
-				},
-				{
-					"name": "Delete Creditor (Soft Delete)",
-					"request": {
-						"method": "DELETE",
-						"header": [],
-						"url": {
-							"raw": "{{baseUrl}}/api/v1/creditors/{{creditorId}}",
-							"host": ["{{baseUrl}}"],
-							"path": ["api", "v1", "creditors", "{{creditorId}}"]
-						}
-					}
-				}
-			]
-		},
-		{
-			"name": "Debtors",
-			"item": [
-				{
-					"name": "Get All Debtors",
-					"request": {
-						"method": "GET",
-						"header": [],
-						"url": {
-							"raw": "{{baseUrl}}/api/v1/debtors?page=0&size=20",
-							"host": ["{{baseUrl}}"],
-							"path": ["api", "v1", "debtors"],
-							"query": [
-								{
-									"key": "page",
-									"value": "0"
-								},
-								{
-									"key": "size",
-									"value": "20"
-								}
-							]
-						}
-					}
-				},
-				{
-					"name": "Get Debtors Filtered by Name (Sample: John)",
-					"request": {
-						"method": "GET",
-						"header": [],
-						"url": {
-							"raw": "{{baseUrl}}/api/v1/debtors?name=John&page=0&size=20",
-							"host": ["{{baseUrl}}"],
-							"path": ["api", "v1", "debtors"],
-							"query": [
-								{
-									"key": "name",
-									"value": "John",
-									"description": "Filter by name (partial match). Sample: 'John' finds 'John Doe'"
-								},
-								{
-									"key": "page",
-									"value": "0"
-								},
-								{
-									"key": "size",
-									"value": "20"
-								}
-							]
-						},
-						"description": "Filter debtors by name. Sample data includes 'John Doe', 'Jane Smith', 'Robert Johnson'"
-					}
-				},
-				{
-					"name": "Get Debtors Filtered by Bank Code",
-					"request": {
-						"method": "GET",
-						"header": [],
-						"url": {
-							"raw": "{{baseUrl}}/api/v1/debtors?bankCode=BANK002&page=0&size=20",
-							"host": ["{{baseUrl}}"],
-							"path": ["api", "v1", "debtors"],
-							"query": [
-								{
-									"key": "bankCode",
-									"value": "BANK002"
-								},
-								{
-									"key": "page",
-									"value": "0"
-								},
-								{
-									"key": "size",
-									"value": "20"
-								}
-							]
-						}
-					}
-				},
-				{
-					"name": "Get Debtor by ID",
-					"request": {
-						"method": "GET",
-						"header": [],
-						"url": {
-							"raw": "{{baseUrl}}/api/v1/debtors/{{debtorId}}",
-							"host": ["{{baseUrl}}"],
-							"path": ["api", "v1", "debtors", "{{debtorId}}"]
-						}
-					}
-				},
-				{
-					"name": "Create Debtor (Sample: John Doe)",
-					"request": {
-						"method": "POST",
-						"header": [
-							{
-								"key": "Content-Type",
-								"value": "application/json"
-							}
-						],
-						"body": {
-							"mode": "raw",
-							"raw": "{\n  \"name\": \"John Doe\",\n  \"accountNumber\": \"DEB001111111\",\n  \"bankCode\": \"BANK001\",\n  \"email\": \"john.doe@email.com\",\n  \"address\": \"100 Main Street, Boston, MA 02101\"\n}",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
-						},
-						"description": "Create debtor using sample data. This matches the sample data in the database."
-					},
-					"url": {
-						"raw": "{{baseUrl}}/api/v1/debtors",
-						"host": ["{{baseUrl}}"],
-						"path": ["api", "v1", "debtors"]
-					}
-				},
-				{
-					"name": "Create Debtor (Sample: Jane Smith)",
-					"request": {
-						"method": "POST",
-						"header": [
-							{
-								"key": "Content-Type",
-								"value": "application/json"
-							}
-						],
-						"body": {
-							"mode": "raw",
-							"raw": "{\n  \"name\": \"Jane Smith\",\n  \"accountNumber\": \"DEB002222222\",\n  \"bankCode\": \"BANK002\",\n  \"email\": \"jane.smith@email.com\",\n  \"address\": \"200 Oak Avenue, Seattle, WA 98101\"\n}",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
-						},
-						"description": "Create second sample debtor."
-					},
-					"url": {
-						"raw": "{{baseUrl}}/api/v1/debtors",
-						"host": ["{{baseUrl}}"],
-						"path": ["api", "v1", "debtors"]
-					}
-				},
-				{
-					"name": "Create Debtor (Sample: Robert Johnson)",
-					"request": {
-						"method": "POST",
-						"header": [
-							{
-								"key": "Content-Type",
-								"value": "application/json"
-							}
-						],
-						"body": {
-							"mode": "raw",
-							"raw": "{\n  \"name\": \"Robert Johnson\",\n  \"accountNumber\": \"DEB003333333\",\n  \"bankCode\": \"BANK003\",\n  \"email\": \"robert.j@email.com\",\n  \"address\": \"300 Pine Road, Austin, TX 78701\"\n}",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
-						},
-						"description": "Create third sample debtor."
-					},
-					"url": {
-						"raw": "{{baseUrl}}/api/v1/debtors",
-						"host": ["{{baseUrl}}"],
-						"path": ["api", "v1", "debtors"]
-					}
-				},
-				{
-					"name": "Delete Debtor (Soft Delete)",
-					"request": {
-						"method": "DELETE",
-						"header": [],
-						"url": {
-							"raw": "{{baseUrl}}/api/v1/debtors/{{debtorId}}",
-							"host": ["{{baseUrl}}"],
-							"path": ["api", "v1", "debtors", "{{debtorId}}"]
-						}
-					}
-				}
-			]
-		},
-		{
-			"name": "Internationalization (i18n)",
-			"item": [
-				{
-					"name": "Get Payment (English)",
-					"request": {
-						"method": "GET",
-						"header": [
-							{
-								"key": "Accept-Language",
-								"value": "en"
-							}
-						],
-						"url": {
-							"raw": "{{baseUrl}}/api/v1/payments/00000000-0000-0000-0000-000000000000",
-							"host": ["{{baseUrl}}"],
-							"path": ["api", "v1", "payments", "00000000-0000-0000-0000-000000000000"]
-						}
-					}
-				},
-				{
-					"name": "Get Payment (Spanish)",
-					"request": {
-						"method": "GET",
-						"header": [
-							{
-								"key": "Accept-Language",
-								"value": "es"
-							}
-						],
-						"url": {
-							"raw": "{{baseUrl}}/api/v1/payments/00000000-0000-0000-0000-000000000000",
-							"host": ["{{baseUrl}}"],
-							"path": ["api", "v1", "payments", "00000000-0000-0000-0000-000000000000"]
-						}
-					}
-				}
-			]
-		},
-		{
-			"name": "Validation Tests",
-			"item": [
-				{
-					"name": "Invalid Payment (Negative Amount)",
-					"request": {
-						"method": "POST",
-						"header": [
-							{
-								"key": "Content-Type",
-								"value": "application/json"
-							}
-						],
-						"body": {
-							"mode": "raw",
-							"raw": "{\n  \"amount\": -10,\n  \"currency\": \"USD\",\n  \"status\": \"RECEIVED\"\n}"
-						},
-						"url": {
-							"raw": "{{baseUrl}}/api/v1/payments",
-							"host": ["{{baseUrl}}"],
-							"path": ["api", "v1", "payments"]
-						}
-					}
-				},
-				{
-					"name": "Invalid Payment (Invalid Currency)",
-					"request": {
-						"method": "POST",
-						"header": [
-							{
-								"key": "Content-Type",
-								"value": "application/json"
-							}
-						],
-						"body": {
-							"mode": "raw",
-							"raw": "{\n  \"amount\": 100.50,\n  \"currency\": \"INVALID\",\n  \"status\": \"RECEIVED\"\n}"
-						},
-						"url": {
-							"raw": "{{baseUrl}}/api/v1/payments",
-							"host": ["{{baseUrl}}"],
-							"path": ["api", "v1", "payments"]
-						}
-					}
-				},
-				{
-					"name": "Invalid Payment (Invalid Status)",
-					"request": {
-						"method": "POST",
-						"header": [
-							{
-								"key": "Content-Type",
-								"value": "application/json"
-							}
-						],
-						"body": {
-							"mode": "raw",
-							"raw": "{\n  \"amount\": 100.50,\n  \"currency\": \"USD\",\n  \"status\": \"INVALID_STATUS\"\n}"
-						},
-						"url": {
-							"raw": "{{baseUrl}}/api/v1/payments",
-							"host": ["{{baseUrl}}"],
-							"path": ["api", "v1", "payments"]
-						}
-					}
-				},
-				{
-					"name": "Invalid Creditor (Empty Fields)",
-					"request": {
-						"method": "POST",
-						"header": [
-							{
-								"key": "Content-Type",
-								"value": "application/json"
-							}
-						],
-						"body": {
-							"mode": "raw",
-							"raw": "{\n  \"name\": \"\",\n  \"accountNumber\": \"\",\n  \"bankCode\": \"\"\n}"
-						},
-						"url": {
-							"raw": "{{baseUrl}}/api/v1/creditors",
-							"host": ["{{baseUrl}}"],
-							"path": ["api", "v1", "creditors"]
-						}
-					}
-				}
-			]
-		},
-		{
-			"name": "Error Tests",
-			"item": [
-				{
-					"name": "Payment Not Found (404)",
-					"request": {
-						"method": "GET",
-						"header": [],
-						"url": {
-							"raw": "{{baseUrl}}/api/v1/payments/00000000-0000-0000-0000-000000000000",
-							"host": ["{{baseUrl}}"],
-							"path": ["api", "v1", "payments", "00000000-0000-0000-0000-000000000000"]
-						}
-					}
-				},
-				{
-					"name": "Creditor Not Found (404)",
-					"request": {
-						"method": "GET",
-						"header": [],
-						"url": {
-							"raw": "{{baseUrl}}/api/v1/creditors/00000000-0000-0000-0000-000000000000",
-							"host": ["{{baseUrl}}"],
-							"path": ["api", "v1", "creditors", "00000000-0000-0000-0000-000000000000"]
-						}
-					}
-				},
-				{
-					"name": "Debtor Not Found (404)",
-					"request": {
-						"method": "GET",
-						"header": [],
-						"url": {
-							"raw": "{{baseUrl}}/api/v1/debtors/00000000-0000-0000-0000-000000000000",
-							"host": ["{{baseUrl}}"],
-							"path": ["api", "v1", "debtors", "00000000-0000-0000-0000-000000000000"]
-						}
-					}
-				}
-			]
-		}
-	],
-	"variable": [
-		{
-			"key": "baseUrl",
-			"value": "http://localhost:8080",
-			"type": "string"
-		},
-		{
-			"key": "creditorId",
-			"value": "",
-			"type": "string"
-		},
-		{
-			"key": "debtorId",
-			"value": "",
-			"type": "string"
-		},
-		{
-			"key": "paymentId",
-			"value": "",
-			"type": "string"
-		}
-	]
+        {
+          "name": "Create Payment (Standalone - No Creditor/Debtor)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"amount\": 1000.00,\n  \"currency\": \"USD\",\n  \"status\": \"RECEIVED\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "description": "Create standalone payment without creditor/debtor. Sample data: amount=1000.00, currency=USD, status=RECEIVED"
+          },
+          "url": {
+            "raw": "{{baseUrl}}/api/v1/payments",
+            "host": ["{{baseUrl}}"],
+            "path": ["api", "v1", "payments"]
+          }
+        },
+        {
+          "name": "Echo Payment (Sample)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"amount\": 2000.00,\n  \"currency\": \"EUR\",\n  \"status\": \"PROCESSING\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "description": "Echo payment - returns and saves the payment. Sample data: amount=2000.00, currency=EUR, status=PROCESSING"
+          },
+          "url": {
+            "raw": "{{baseUrl}}/api/v1/payments/echo",
+            "host": ["{{baseUrl}}"],
+            "path": ["api", "v1", "payments", "echo"]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Creditors",
+      "item": [
+        {
+          "name": "Get All Creditors",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/creditors?page=0&size=20",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "creditors"],
+              "query": [
+                {
+                  "key": "page",
+                  "value": "0"
+                },
+                {
+                  "key": "size",
+                  "value": "20"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Get Creditors Filtered by Name (Sample: Acme)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/creditors?name=Acme&page=0&size=20",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "creditors"],
+              "query": [
+                {
+                  "key": "name",
+                  "value": "Acme",
+                  "description": "Filter by name (partial match). Sample: 'Acme' finds 'Acme Corporation'"
+                },
+                {
+                  "key": "page",
+                  "value": "0"
+                },
+                {
+                  "key": "size",
+                  "value": "20"
+                }
+              ]
+            },
+            "description": "Filter creditors by name. Sample data includes 'Acme Corporation', 'Tech Solutions Inc', 'Global Services Ltd'"
+          }
+        },
+        {
+          "name": "Get Creditors Filtered by Bank Code",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/creditors?bankCode=BANK001&page=0&size=20",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "creditors"],
+              "query": [
+                {
+                  "key": "bankCode",
+                  "value": "BANK001"
+                },
+                {
+                  "key": "page",
+                  "value": "0"
+                },
+                {
+                  "key": "size",
+                  "value": "20"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Get Creditor by ID",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/creditors/{{creditorId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "creditors", "{{creditorId}}"]
+            }
+          }
+        },
+        {
+          "name": "Create Creditor (Sample: Acme Corporation)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Acme Corporation\",\n  \"accountNumber\": \"ACC001234567\",\n  \"bankCode\": \"BANK001\",\n  \"email\": \"finance@acme.com\",\n  \"address\": \"123 Business Street, New York, NY 10001\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "description": "Create creditor using sample data. This matches the sample data in the database."
+          },
+          "url": {
+            "raw": "{{baseUrl}}/api/v1/creditors",
+            "host": ["{{baseUrl}}"],
+            "path": ["api", "v1", "creditors"]
+          }
+        },
+        {
+          "name": "Create Creditor (Sample: Tech Solutions Inc)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Tech Solutions Inc\",\n  \"accountNumber\": \"ACC002345678\",\n  \"bankCode\": \"BANK002\",\n  \"email\": \"payments@techsolutions.com\",\n  \"address\": \"456 Tech Avenue, San Francisco, CA 94102\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "description": "Create second sample creditor."
+          },
+          "url": {
+            "raw": "{{baseUrl}}/api/v1/creditors",
+            "host": ["{{baseUrl}}"],
+            "path": ["api", "v1", "creditors"]
+          }
+        },
+        {
+          "name": "Create Creditor (Sample: Global Services Ltd)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Global Services Ltd\",\n  \"accountNumber\": \"ACC003456789\",\n  \"bankCode\": \"BANK003\",\n  \"email\": \"accounts@globalservices.com\",\n  \"address\": \"789 Global Plaza, London, UK\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "description": "Create third sample creditor."
+          },
+          "url": {
+            "raw": "{{baseUrl}}/api/v1/creditors",
+            "host": ["{{baseUrl}}"],
+            "path": ["api", "v1", "creditors"]
+          }
+        },
+        {
+          "name": "Delete Creditor (Soft Delete)",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/creditors/{{creditorId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "creditors", "{{creditorId}}"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Debtors",
+      "item": [
+        {
+          "name": "Get All Debtors",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/debtors?page=0&size=20",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "debtors"],
+              "query": [
+                {
+                  "key": "page",
+                  "value": "0"
+                },
+                {
+                  "key": "size",
+                  "value": "20"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Get Debtors Filtered by Name (Sample: John)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/debtors?name=John&page=0&size=20",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "debtors"],
+              "query": [
+                {
+                  "key": "name",
+                  "value": "John",
+                  "description": "Filter by name (partial match). Sample: 'John' finds 'John Doe'"
+                },
+                {
+                  "key": "page",
+                  "value": "0"
+                },
+                {
+                  "key": "size",
+                  "value": "20"
+                }
+              ]
+            },
+            "description": "Filter debtors by name. Sample data includes 'John Doe', 'Jane Smith', 'Robert Johnson'"
+          }
+        },
+        {
+          "name": "Get Debtors Filtered by Bank Code",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/debtors?bankCode=BANK002&page=0&size=20",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "debtors"],
+              "query": [
+                {
+                  "key": "bankCode",
+                  "value": "BANK002"
+                },
+                {
+                  "key": "page",
+                  "value": "0"
+                },
+                {
+                  "key": "size",
+                  "value": "20"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Get Debtor by ID",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/debtors/{{debtorId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "debtors", "{{debtorId}}"]
+            }
+          }
+        },
+        {
+          "name": "Create Debtor (Sample: John Doe)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"John Doe\",\n  \"accountNumber\": \"DEB001111111\",\n  \"bankCode\": \"BANK001\",\n  \"email\": \"john.doe@email.com\",\n  \"address\": \"100 Main Street, Boston, MA 02101\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "description": "Create debtor using sample data. This matches the sample data in the database."
+          },
+          "url": {
+            "raw": "{{baseUrl}}/api/v1/debtors",
+            "host": ["{{baseUrl}}"],
+            "path": ["api", "v1", "debtors"]
+          }
+        },
+        {
+          "name": "Create Debtor (Sample: Jane Smith)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Jane Smith\",\n  \"accountNumber\": \"DEB002222222\",\n  \"bankCode\": \"BANK002\",\n  \"email\": \"jane.smith@email.com\",\n  \"address\": \"200 Oak Avenue, Seattle, WA 98101\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "description": "Create second sample debtor."
+          },
+          "url": {
+            "raw": "{{baseUrl}}/api/v1/debtors",
+            "host": ["{{baseUrl}}"],
+            "path": ["api", "v1", "debtors"]
+          }
+        },
+        {
+          "name": "Create Debtor (Sample: Robert Johnson)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Robert Johnson\",\n  \"accountNumber\": \"DEB003333333\",\n  \"bankCode\": \"BANK003\",\n  \"email\": \"robert.j@email.com\",\n  \"address\": \"300 Pine Road, Austin, TX 78701\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "description": "Create third sample debtor."
+          },
+          "url": {
+            "raw": "{{baseUrl}}/api/v1/debtors",
+            "host": ["{{baseUrl}}"],
+            "path": ["api", "v1", "debtors"]
+          }
+        },
+        {
+          "name": "Delete Debtor (Soft Delete)",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/debtors/{{debtorId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "debtors", "{{debtorId}}"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Internationalization (i18n)",
+      "item": [
+        {
+          "name": "Get Payment (English)",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept-Language",
+                "value": "en"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/payments/00000000-0000-0000-0000-000000000000",
+              "host": ["{{baseUrl}}"],
+              "path": [
+                "api",
+                "v1",
+                "payments",
+                "00000000-0000-0000-0000-000000000000"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Get Payment (Spanish)",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept-Language",
+                "value": "es"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/payments/00000000-0000-0000-0000-000000000000",
+              "host": ["{{baseUrl}}"],
+              "path": [
+                "api",
+                "v1",
+                "payments",
+                "00000000-0000-0000-0000-000000000000"
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Validation Tests",
+      "item": [
+        {
+          "name": "Invalid Payment (Negative Amount)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"amount\": -10,\n  \"currency\": \"USD\",\n  \"status\": \"RECEIVED\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/payments",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "payments"]
+            }
+          }
+        },
+        {
+          "name": "Invalid Payment (Invalid Currency)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"amount\": 100.50,\n  \"currency\": \"INVALID\",\n  \"status\": \"RECEIVED\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/payments",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "payments"]
+            }
+          }
+        },
+        {
+          "name": "Invalid Payment (Invalid Status)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"amount\": 100.50,\n  \"currency\": \"USD\",\n  \"status\": \"INVALID_STATUS\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/payments",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "payments"]
+            }
+          }
+        },
+        {
+          "name": "Invalid Creditor (Empty Fields)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"\",\n  \"accountNumber\": \"\",\n  \"bankCode\": \"\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/creditors",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "creditors"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Error Tests",
+      "item": [
+        {
+          "name": "Payment Not Found (404)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/payments/00000000-0000-0000-0000-000000000000",
+              "host": ["{{baseUrl}}"],
+              "path": [
+                "api",
+                "v1",
+                "payments",
+                "00000000-0000-0000-0000-000000000000"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Creditor Not Found (404)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/creditors/00000000-0000-0000-0000-000000000000",
+              "host": ["{{baseUrl}}"],
+              "path": [
+                "api",
+                "v1",
+                "creditors",
+                "00000000-0000-0000-0000-000000000000"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Debtor Not Found (404)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/debtors/00000000-0000-0000-0000-000000000000",
+              "host": ["{{baseUrl}}"],
+              "path": [
+                "api",
+                "v1",
+                "debtors",
+                "00000000-0000-0000-0000-000000000000"
+              ]
+            }
+          }
+        }
+      ]
+    }
+  ],
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:8080",
+      "type": "string"
+    },
+    {
+      "key": "creditorId",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "debtorId",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "paymentId",
+      "value": "",
+      "type": "string"
+    }
+  ]
 }

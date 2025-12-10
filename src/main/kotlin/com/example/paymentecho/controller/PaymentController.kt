@@ -80,26 +80,34 @@ class PaymentController(private val service: PaymentService) {
     @PostMapping
     @Operation(
         summary = "Create a new payment",
-        description = "Create a new payment with the provided details. Sample data examples:\n" +
+        description = "Create a new payment with the provided details.\n\n" +
+                "⚠️ IMPORTANT: If using creditorId or debtorId, you must first:\n" +
+                "1. Call GET /api/v1/creditors to get a valid creditor ID\n" +
+                "2. Call GET /api/v1/debtors to get a valid debtor ID\n" +
+                "3. Use those IDs in the request\n\n" +
+                "Sample data examples:\n" +
                 "- Payment with creditor/debtor: amount=1500.00, currency=USD, status=RECEIVED\n" +
                 "- Standalone payment: amount=1000.00, currency=USD, status=RECEIVED (no creditorId/debtorId)"
     )
     @ApiResponses(
         value = [
             ApiResponse(responseCode = "201", description = "Payment created successfully"),
-            ApiResponse(responseCode = "400", description = "Invalid input", content = [Content()])
+            ApiResponse(responseCode = "400", description = "Invalid input", content = [Content()]),
+            ApiResponse(responseCode = "404", description = "Creditor or Debtor not found if invalid IDs provided", content = [Content()])
         ]
     )
     fun create(
         @Valid
         @io.swagger.v3.oas.annotations.parameters.RequestBody(
-            description = "Payment creation request. Example with sample data:\n" +
+            description = "Payment creation request.\n\n" +
+                    "⚠️ NOTE: Replace placeholder UUIDs with actual IDs from GET /api/v1/creditors and GET /api/v1/debtors endpoints.\n\n" +
+                    "Example with sample data:\n" +
                     "{\n" +
                     "  \"amount\": 1500.00,\n" +
                     "  \"currency\": \"USD\",\n" +
                     "  \"status\": \"RECEIVED\",\n" +
-                    "  \"creditorId\": \"<use-id-from-get-all-creditors>\",\n" +
-                    "  \"debtorId\": \"<use-id-from-get-all-debtors>\"\n" +
+                    "  \"creditorId\": \"<REPLACE-WITH-ACTUAL-CREDITOR-ID>\",\n" +
+                    "  \"debtorId\": \"<REPLACE-WITH-ACTUAL-DEBTOR-ID>\"\n" +
                     "}",
             required = true,
             content = [Content(
@@ -107,13 +115,13 @@ class PaymentController(private val service: PaymentService) {
                 examples = [
                     io.swagger.v3.oas.annotations.media.ExampleObject(
                         name = "Payment with Creditor/Debtor",
-                        value = """{"amount": 1500.00, "currency": "USD", "status": "RECEIVED", "creditorId": "123e4567-e89b-12d3-a456-426614174000", "debtorId": "123e4567-e89b-12d3-a456-426614174001"}""",
-                        summary = "Payment with creditor and debtor"
+                        value = """{"amount": 1500.00, "currency": "USD", "status": "RECEIVED", "creditorId": "REPLACE-WITH-ACTUAL-CREDITOR-ID", "debtorId": "REPLACE-WITH-ACTUAL-DEBTOR-ID"}""",
+                        summary = "⚠️ Replace IDs with actual values from GET endpoints"
                     ),
                     io.swagger.v3.oas.annotations.media.ExampleObject(
-                        name = "Standalone Payment",
+                        name = "Standalone Payment (Recommended for Testing)",
                         value = """{"amount": 1000.00, "currency": "USD", "status": "RECEIVED"}""",
-                        summary = "Payment without creditor/debtor"
+                        summary = "Payment without creditor/debtor - works immediately"
                     )
                 ]
             )]
