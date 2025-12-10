@@ -64,7 +64,12 @@ class CreditorController(private val service: CreditorService) {
     }
 
     @PostMapping
-    @Operation(summary = "Create a new creditor", description = "Create a new creditor with the provided details")
+    @Operation(
+        summary = "Create a new creditor",
+        description = "Create a new creditor with the provided details. Sample data examples:\n" +
+                "- Acme Corporation: name=\"Acme Corporation\", accountNumber=\"ACC001234567\", bankCode=\"BANK001\"\n" +
+                "- Tech Solutions Inc: name=\"Tech Solutions Inc\", accountNumber=\"ACC002345678\", bankCode=\"BANK002\""
+    )
     @ApiResponses(
         value = [
             ApiResponse(responseCode = "201", description = "Creditor created successfully"),
@@ -73,7 +78,32 @@ class CreditorController(private val service: CreditorService) {
     )
     fun create(
         @Valid
-        @io.swagger.v3.oas.annotations.parameters.RequestBody(description = "Creditor creation request", required = true)
+        @io.swagger.v3.oas.annotations.parameters.RequestBody(
+            description = "Creditor creation request. Example with sample data:\n" +
+                    "{\n" +
+                    "  \"name\": \"Acme Corporation\",\n" +
+                    "  \"accountNumber\": \"ACC001234567\",\n" +
+                    "  \"bankCode\": \"BANK001\",\n" +
+                    "  \"email\": \"finance@acme.com\",\n" +
+                    "  \"address\": \"123 Business Street, New York, NY 10001\"\n" +
+                    "}",
+            required = true,
+            content = [Content(
+                mediaType = "application/json",
+                examples = [
+                    io.swagger.v3.oas.annotations.media.ExampleObject(
+                        name = "Acme Corporation",
+                        value = """{"name": "Acme Corporation", "accountNumber": "ACC001234567", "bankCode": "BANK001", "email": "finance@acme.com", "address": "123 Business Street, New York, NY 10001"}""",
+                        summary = "Sample creditor 1"
+                    ),
+                    io.swagger.v3.oas.annotations.media.ExampleObject(
+                        name = "Tech Solutions Inc",
+                        value = """{"name": "Tech Solutions Inc", "accountNumber": "ACC002345678", "bankCode": "BANK002", "email": "payments@techsolutions.com", "address": "456 Tech Avenue, San Francisco, CA 94102"}""",
+                        summary = "Sample creditor 2"
+                    )
+                ]
+            )]
+        )
         @RequestBody request: CreditorCreateRequest
     ): ResponseEntity<CreditorResponse> {
         val created = service.create(request)

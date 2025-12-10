@@ -78,7 +78,12 @@ class PaymentController(private val service: PaymentService) {
     }
 
     @PostMapping
-    @Operation(summary = "Create a new payment", description = "Create a new payment with the provided details")
+    @Operation(
+        summary = "Create a new payment",
+        description = "Create a new payment with the provided details. Sample data examples:\n" +
+                "- Payment with creditor/debtor: amount=1500.00, currency=USD, status=RECEIVED\n" +
+                "- Standalone payment: amount=1000.00, currency=USD, status=RECEIVED (no creditorId/debtorId)"
+    )
     @ApiResponses(
         value = [
             ApiResponse(responseCode = "201", description = "Payment created successfully"),
@@ -87,7 +92,32 @@ class PaymentController(private val service: PaymentService) {
     )
     fun create(
         @Valid
-        @io.swagger.v3.oas.annotations.parameters.RequestBody(description = "Payment creation request", required = true)
+        @io.swagger.v3.oas.annotations.parameters.RequestBody(
+            description = "Payment creation request. Example with sample data:\n" +
+                    "{\n" +
+                    "  \"amount\": 1500.00,\n" +
+                    "  \"currency\": \"USD\",\n" +
+                    "  \"status\": \"RECEIVED\",\n" +
+                    "  \"creditorId\": \"<use-id-from-get-all-creditors>\",\n" +
+                    "  \"debtorId\": \"<use-id-from-get-all-debtors>\"\n" +
+                    "}",
+            required = true,
+            content = [Content(
+                mediaType = "application/json",
+                examples = [
+                    io.swagger.v3.oas.annotations.media.ExampleObject(
+                        name = "Payment with Creditor/Debtor",
+                        value = """{"amount": 1500.00, "currency": "USD", "status": "RECEIVED", "creditorId": "123e4567-e89b-12d3-a456-426614174000", "debtorId": "123e4567-e89b-12d3-a456-426614174001"}""",
+                        summary = "Payment with creditor and debtor"
+                    ),
+                    io.swagger.v3.oas.annotations.media.ExampleObject(
+                        name = "Standalone Payment",
+                        value = """{"amount": 1000.00, "currency": "USD", "status": "RECEIVED"}""",
+                        summary = "Payment without creditor/debtor"
+                    )
+                ]
+            )]
+        )
         @RequestBody request: PaymentCreateRequest
     ): ResponseEntity<PaymentResponse> {
         val created = service.create(request)
@@ -95,7 +125,10 @@ class PaymentController(private val service: PaymentService) {
     }
 
     @PostMapping("/echo")
-    @Operation(summary = "Echo a payment", description = "Echo a payment (returns the same payment data and saves it)")
+    @Operation(
+        summary = "Echo a payment",
+        description = "Echo a payment (returns the same payment data and saves it). Sample example: amount=2000.00, currency=EUR, status=PROCESSING"
+    )
     @ApiResponses(
         value = [
             ApiResponse(responseCode = "200", description = "Payment echoed successfully"),
@@ -104,7 +137,20 @@ class PaymentController(private val service: PaymentService) {
     )
     fun echo(
         @Valid
-        @io.swagger.v3.oas.annotations.parameters.RequestBody(description = "Payment echo request", required = true)
+        @io.swagger.v3.oas.annotations.parameters.RequestBody(
+            description = "Payment echo request. Example: {\"amount\": 2000.00, \"currency\": \"EUR\", \"status\": \"PROCESSING\"}",
+            required = true,
+            content = [Content(
+                mediaType = "application/json",
+                examples = [
+                    io.swagger.v3.oas.annotations.media.ExampleObject(
+                        name = "Echo Payment Example",
+                        value = """{"amount": 2000.00, "currency": "EUR", "status": "PROCESSING"}""",
+                        summary = "Echo payment sample"
+                    )
+                ]
+            )]
+        )
         @RequestBody request: PaymentEchoRequest
     ): ResponseEntity<PaymentResponse> {
         return ResponseEntity.ok(service.echo(request))

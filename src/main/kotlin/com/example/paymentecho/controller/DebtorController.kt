@@ -64,7 +64,12 @@ class DebtorController(private val service: DebtorService) {
     }
 
     @PostMapping
-    @Operation(summary = "Create a new debtor", description = "Create a new debtor with the provided details")
+    @Operation(
+        summary = "Create a new debtor",
+        description = "Create a new debtor with the provided details. Sample data examples:\n" +
+                "- John Doe: name=\"John Doe\", accountNumber=\"DEB001111111\", bankCode=\"BANK001\"\n" +
+                "- Jane Smith: name=\"Jane Smith\", accountNumber=\"DEB002222222\", bankCode=\"BANK002\""
+    )
     @ApiResponses(
         value = [
             ApiResponse(responseCode = "201", description = "Debtor created successfully"),
@@ -73,7 +78,32 @@ class DebtorController(private val service: DebtorService) {
     )
     fun create(
         @Valid
-        @io.swagger.v3.oas.annotations.parameters.RequestBody(description = "Debtor creation request", required = true)
+        @io.swagger.v3.oas.annotations.parameters.RequestBody(
+            description = "Debtor creation request. Example with sample data:\n" +
+                    "{\n" +
+                    "  \"name\": \"John Doe\",\n" +
+                    "  \"accountNumber\": \"DEB001111111\",\n" +
+                    "  \"bankCode\": \"BANK001\",\n" +
+                    "  \"email\": \"john.doe@email.com\",\n" +
+                    "  \"address\": \"100 Main Street, Boston, MA 02101\"\n" +
+                    "}",
+            required = true,
+            content = [Content(
+                mediaType = "application/json",
+                examples = [
+                    io.swagger.v3.oas.annotations.media.ExampleObject(
+                        name = "John Doe",
+                        value = """{"name": "John Doe", "accountNumber": "DEB001111111", "bankCode": "BANK001", "email": "john.doe@email.com", "address": "100 Main Street, Boston, MA 02101"}""",
+                        summary = "Sample debtor 1"
+                    ),
+                    io.swagger.v3.oas.annotations.media.ExampleObject(
+                        name = "Jane Smith",
+                        value = """{"name": "Jane Smith", "accountNumber": "DEB002222222", "bankCode": "BANK002", "email": "jane.smith@email.com", "address": "200 Oak Avenue, Seattle, WA 98101"}""",
+                        summary = "Sample debtor 2"
+                    )
+                ]
+            )]
+        )
         @RequestBody request: DebtorCreateRequest
     ): ResponseEntity<DebtorResponse> {
         val created = service.create(request)
