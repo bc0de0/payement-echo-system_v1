@@ -35,7 +35,7 @@ class CreditorController(private val service: CreditorService) {
     @GetMapping
     @Operation(
         summary = "Get all creditors",
-        description = "Retrieve a paginated list of all creditors. Supports Accept-Language header for i18n (default: en)."
+        description = "Retrieve a paginated list of all creditors. Supports Accept-Language header for i18n (default: hi - Hindi)."
     )
     @ApiResponses(
         value = [
@@ -68,7 +68,7 @@ class CreditorController(private val service: CreditorService) {
     @GetMapping("/{id}")
     @Operation(
         summary = "Get creditor by ID",
-        description = "Retrieve a specific creditor by its UUID. Supports Accept-Language header for i18n (default: en)."
+        description = "Retrieve a specific creditor by its UUID. Supports Accept-Language header for i18n (default: hi - Hindi)."
     )
     @ApiResponses(
         value = [

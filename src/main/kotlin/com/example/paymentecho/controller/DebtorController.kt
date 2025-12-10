@@ -35,7 +35,7 @@ class DebtorController(private val service: DebtorService) {
     @GetMapping
     @Operation(
         summary = "Get all debtors",
-        description = "Retrieve a paginated list of all debtors. Supports Accept-Language header for i18n (default: en)."
+        description = "Retrieve a paginated list of all debtors. Supports Accept-Language header for i18n (default: hi - Hindi)."
     )
     @ApiResponses(
         value = [

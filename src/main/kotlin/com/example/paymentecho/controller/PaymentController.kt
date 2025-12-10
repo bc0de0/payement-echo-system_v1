@@ -37,7 +37,7 @@ class PaymentController(private val service: PaymentService) {
     @GetMapping
     @Operation(
         summary = "Get all payments",
-        description = "Retrieve a paginated list of all payments. Supports Accept-Language header for i18n (default: en)."
+        description = "Retrieve a paginated list of all payments. Supports Accept-Language header for i18n (default: hi - Hindi)."
     )
     @ApiResponses(
         value = [
@@ -111,7 +111,7 @@ class PaymentController(private val service: PaymentService) {
                 "Sample data examples:\n" +
                 "- Payment with creditor/debtor: amount=1500.00, currency=USD, status=RECEIVED\n" +
                 "- Standalone payment: amount=1000.00, currency=USD, status=RECEIVED (no creditorId/debtorId)\n\n" +
-                "Supports Accept-Language header for i18n (default: en)."
+                "Supports Accept-Language header for i18n (default: hi - Hindi)."
     )
     @ApiResponses(
         value = [
