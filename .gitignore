@@ -45,3 +45,7 @@ out/
 
 ### DevTools ###
 spring-boot-devtools.properties
+data/
+*.db
+*.mv.db
+*.trace.db
