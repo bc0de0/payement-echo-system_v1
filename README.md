@@ -321,6 +321,7 @@ curl -H "Accept-Language: bn" http://localhost:8080/api/v1/payments/123
 **Default Language**: Hindi (hi) - All API endpoints default to Hindi if `Accept-Language` header is not provided.
 
 **Features**:
+
 - ✅ Localized error messages (404, 400, 500)
 - ✅ Localized validation field errors
 - ✅ Works for all REST and GraphQL APIs

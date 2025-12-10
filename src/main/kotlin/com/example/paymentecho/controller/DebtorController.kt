@@ -68,7 +68,7 @@ class DebtorController(private val service: DebtorService) {
     @GetMapping("/{id}")
     @Operation(
         summary = "Get debtor by ID",
-        description = "Retrieve a specific debtor by its UUID. Supports Accept-Language header for i18n (default: en)."
+        description = "Retrieve a specific debtor by its UUID. Supports Accept-Language header for i18n (default: hi - Hindi)."
     )
     @ApiResponses(
         value = [
@@ -92,7 +92,7 @@ class DebtorController(private val service: DebtorService) {
         description = "Create a new debtor with the provided details. Sample data examples:\n" +
                 "- John Doe: name=\"John Doe\", accountNumber=\"DEB001111111\", bankCode=\"BANK001\"\n" +
                 "- Jane Smith: name=\"Jane Smith\", accountNumber=\"DEB002222222\", bankCode=\"BANK002\"\n\n" +
-                "Supports Accept-Language header for i18n (default: en)."
+                "Supports Accept-Language header for i18n (default: hi - Hindi)."
     )
     @ApiResponses(
         value = [

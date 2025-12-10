@@ -92,7 +92,7 @@ class CreditorController(private val service: CreditorService) {
         description = "Create a new creditor with the provided details. Sample data examples:\n" +
                 "- Acme Corporation: name=\"Acme Corporation\", accountNumber=\"ACC001234567\", bankCode=\"BANK001\"\n" +
                 "- Tech Solutions Inc: name=\"Tech Solutions Inc\", accountNumber=\"ACC002345678\", bankCode=\"BANK002\"\n\n" +
-                "Supports Accept-Language header for i18n (default: en)."
+                "Supports Accept-Language header for i18n (default: hi - Hindi)."
     )
     @ApiResponses(
         value = [
