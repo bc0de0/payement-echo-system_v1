@@ -15,6 +15,7 @@ import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
 import java.util.*
+import java.util.Locale
 
 @RestController
 @RequestMapping("/api/v1/debtors")
@@ -22,7 +23,10 @@ import java.util.*
 class DebtorController(private val service: DebtorService) {
 
     @GetMapping
-    @Operation(summary = "Get all debtors", description = "Retrieve a paginated list of all debtors")
+    @Operation(
+        summary = "Get all debtors",
+        description = "Retrieve a paginated list of all debtors. Supports Accept-Language header for i18n (default: en)."
+    )
     @ApiResponses(
         value = [
             ApiResponse(responseCode = "200", description = "Successfully retrieved debtors")
@@ -42,14 +46,20 @@ class DebtorController(private val service: DebtorService) {
         @RequestParam(required = false) name: String?,
         
         @Parameter(description = "Filter by bank code", example = "BANK002")
-        @RequestParam(required = false) bankCode: String?
+        @RequestParam(required = false) bankCode: String?,
+        
+        @Parameter(description = "Language preference (en, es, fr, de, hi, bn, ta, te, kn, ru, zh). Default: hi", example = "hi")
+        @RequestHeader(name = "Accept-Language", required = false, defaultValue = "hi") acceptLanguage: String
     ): ResponseEntity<DebtorListResponse> {
         val debtors = service.findAll(page, size, sort, name, bankCode)
         return ResponseEntity.ok(DebtorListResponse(debtors = debtors.content, total = debtors.totalElements.toInt()))
     }
 
     @GetMapping("/{id}")
-    @Operation(summary = "Get debtor by ID", description = "Retrieve a specific debtor by its UUID")
+    @Operation(
+        summary = "Get debtor by ID",
+        description = "Retrieve a specific debtor by its UUID. Supports Accept-Language header for i18n (default: en)."
+    )
     @ApiResponses(
         value = [
             ApiResponse(responseCode = "200", description = "Debtor found"),
@@ -58,7 +68,10 @@ class DebtorController(private val service: DebtorService) {
     )
     fun getById(
         @Parameter(description = "Debtor UUID", required = true)
-        @PathVariable id: UUID
+        @PathVariable id: UUID,
+        
+        @Parameter(description = "Language preference (en, es, fr, de, hi, bn, ta, te, kn, ru, zh). Default: hi", example = "hi")
+        @RequestHeader(name = "Accept-Language", required = false, defaultValue = "hi") acceptLanguage: String
     ): ResponseEntity<DebtorResponse> {
         return ResponseEntity.ok(service.findById(id))
     }
@@ -68,7 +81,8 @@ class DebtorController(private val service: DebtorService) {
         summary = "Create a new debtor",
         description = "Create a new debtor with the provided details. Sample data examples:\n" +
                 "- John Doe: name=\"John Doe\", accountNumber=\"DEB001111111\", bankCode=\"BANK001\"\n" +
-                "- Jane Smith: name=\"Jane Smith\", accountNumber=\"DEB002222222\", bankCode=\"BANK002\""
+                "- Jane Smith: name=\"Jane Smith\", accountNumber=\"DEB002222222\", bankCode=\"BANK002\"\n\n" +
+                "Supports Accept-Language header for i18n (default: en)."
     )
     @ApiResponses(
         value = [
@@ -104,14 +118,20 @@ class DebtorController(private val service: DebtorService) {
                 ]
             )]
         )
-        @RequestBody request: DebtorCreateRequest
+        @RequestBody request: DebtorCreateRequest,
+        
+        @Parameter(description = "Language preference (en, es, fr, de, hi, bn, ta, te, kn, ru, zh). Default: hi", example = "hi")
+        @RequestHeader(name = "Accept-Language", required = false, defaultValue = "hi") acceptLanguage: String
     ): ResponseEntity<DebtorResponse> {
         val created = service.create(request)
         return ResponseEntity.status(HttpStatus.CREATED).body(created)
     }
 
     @DeleteMapping("/{id}")
-    @Operation(summary = "Delete a debtor", description = "Delete a debtor by its UUID")
+    @Operation(
+        summary = "Delete a debtor",
+        description = "Delete a debtor by its UUID (soft delete). Supports Accept-Language header for i18n (default: en)."
+    )
     @ApiResponses(
         value = [
             ApiResponse(responseCode = "204", description = "Debtor deleted successfully"),
@@ -120,7 +140,10 @@ class DebtorController(private val service: DebtorService) {
     )
     fun delete(
         @Parameter(description = "Debtor UUID", required = true)
-        @PathVariable id: UUID
+        @PathVariable id: UUID,
+        
+        @Parameter(description = "Language preference (en, es, fr, de, hi, bn, ta, te, kn, ru, zh). Default: hi", example = "hi")
+        @RequestHeader(name = "Accept-Language", required = false, defaultValue = "hi") acceptLanguage: String
     ): ResponseEntity<Void> {
         service.delete(id)
         return ResponseEntity.noContent().build()

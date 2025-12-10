@@ -28,6 +28,7 @@ curl http://localhost:8080/api/v1/creditors
 ```
 
 **Response example:**
+
 ```json
 {
   "total": 3,
@@ -50,6 +51,7 @@ curl http://localhost:8080/api/v1/debtors
 ```
 
 **Response example:**
+
 ```json
 {
   "total": 3,
@@ -89,6 +91,7 @@ curl -X 'POST' \
 1. **Open Swagger UI**: http://localhost:8080/swagger-ui.html
 
 2. **Get IDs First**:
+
    - Expand `GET /api/v1/creditors`
    - Click "Try it out" → "Execute"
    - Copy an `id` from the response
@@ -108,6 +111,7 @@ curl -X 'POST' \
 ### Method 1: Use Variables (Recommended)
 
 1. **Set Variables**:
+
    - Run "Get All Creditors" request
    - Copy an `id` from response
    - Go to Collection Variables → Set `creditorId` = `<copied-id>`
@@ -129,16 +133,19 @@ curl -X 'POST' \
 The application automatically creates sample data on first startup:
 
 ### Creditors (3)
+
 - **Acme Corporation** - Account: ACC001234567, Bank: BANK001
 - **Tech Solutions Inc** - Account: ACC002345678, Bank: BANK002
 - **Global Services Ltd** - Account: ACC003456789, Bank: BANK003
 
 ### Debtors (3)
+
 - **John Doe** - Account: DEB001111111, Bank: BANK001
 - **Jane Smith** - Account: DEB002222222, Bank: BANK002
 - **Robert Johnson** - Account: DEB003333333, Bank: BANK003
 
 ### Payments (7)
+
 - Various amounts, currencies (USD, EUR, GBP), and statuses
 
 ---
@@ -147,7 +154,8 @@ The application automatically creates sample data on first startup:
 
 ### Error: "Creditor not found with id: ..."
 
-**Solution**: The ID you're using doesn't exist. 
+**Solution**: The ID you're using doesn't exist.
+
 1. Run `GET /api/v1/creditors` to get valid IDs
 2. Use one of those IDs, or
 3. Create a standalone payment without creditorId/debtorId
@@ -162,7 +170,7 @@ If you just want to test quickly, use a payment without creditorId/debtorId:
 
 ```json
 {
-  "amount": 1000.00,
+  "amount": 1000.0,
   "currency": "USD",
   "status": "RECEIVED"
 }

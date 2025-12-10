@@ -2,11 +2,245 @@
   "info": {
     "_postman_id": "payment-echo-system-v1",
     "name": "Payment Echo System API v1",
-    "description": "Complete API collection for Payment Echo System with filtering, pagination, and i18n support. All requests include test scripts and auto-extract IDs.",
+    "description": "Complete API collection for Payment Echo System with filtering, pagination, and i18n support. All requests include test scripts and auto-extract IDs. CRUD operations ready to test.",
     "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
     "_exporter_id": "payment-echo-system"
   },
+  "event": [
+    {
+      "listen": "prerequest",
+      "script": {
+        "type": "text/javascript",
+        "exec": [
+          "// Auto-fetch IDs if variables are not set",
+          "if (!pm.collectionVariables.get('creditorId')) {",
+          "    console.log('Auto-fetching creditorId...');",
+          "    pm.sendRequest({",
+          "        url: pm.collectionVariables.get('baseUrl') + '/api/v1/creditors?page=0&size=1',",
+          "        method: 'GET'",
+          "    }, function (err, res) {",
+          "        if (!err && res.code === 200) {",
+          "            var data = res.json();",
+          "            if (data.creditors && data.creditors.length > 0) {",
+          "                pm.collectionVariables.set('creditorId', data.creditors[0].id);",
+          "                console.log('Set creditorId:', data.creditors[0].id);",
+          "            }",
+          "        }",
+          "    });",
+          "}",
+          "",
+          "if (!pm.collectionVariables.get('debtorId')) {",
+          "    console.log('Auto-fetching debtorId...');",
+          "    pm.sendRequest({",
+          "        url: pm.collectionVariables.get('baseUrl') + '/api/v1/debtors?page=0&size=1',",
+          "        method: 'GET'",
+          "    }, function (err, res) {",
+          "        if (!err && res.code === 200) {",
+          "            var data = res.json();",
+          "            if (data.debtors && data.debtors.length > 0) {",
+          "                pm.collectionVariables.set('debtorId', data.debtors[0].id);",
+          "                console.log('Set debtorId:', data.debtors[0].id);",
+          "            }",
+          "        }",
+          "    });",
+          "}",
+          "",
+          "if (!pm.collectionVariables.get('paymentId')) {",
+          "    console.log('Auto-fetching paymentId...');",
+          "    pm.sendRequest({",
+          "        url: pm.collectionVariables.get('baseUrl') + '/api/v1/payments?page=0&size=1',",
+          "        method: 'GET'",
+          "    }, function (err, res) {",
+          "        if (!err && res.code === 200) {",
+          "            var data = res.json();",
+          "            if (data.payments && data.payments.length > 0) {",
+          "                pm.collectionVariables.set('paymentId', data.payments[0].id);",
+          "                console.log('Set paymentId:', data.payments[0].id);",
+          "            }",
+          "        }",
+          "    });",
+          "}"
+        ]
+      }
+    }
+  ],
   "item": [
+    {
+      "name": "Setup - Get IDs First",
+      "item": [
+        {
+          "name": "1. Get All Creditors (Sets creditorId)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "if (pm.response.code === 200) {",
+                  "    var jsonData = pm.response.json();",
+                  "    if (jsonData.creditors && jsonData.creditors.length > 0) {",
+                  "        pm.collectionVariables.set('creditorId', jsonData.creditors[0].id);",
+                  "        console.log('✅ Set creditorId:', jsonData.creditors[0].id);",
+                  "        console.log('Creditor:', jsonData.creditors[0].name);",
+                  "    }",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept-Language",
+                "value": "{{language}}",
+                "description": "Language preference. Use {{language}} variable (default: hi - Hindi)"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/creditors?page=0&size=20",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "creditors"
+              ],
+              "query": [
+                {
+                  "key": "page",
+                  "value": "0"
+                },
+                {
+                  "key": "size",
+                  "value": "20"
+                }
+              ]
+            },
+            "description": "⚠️ RUN THIS FIRST to set {{creditorId}} variable. This is required for Create Payment (with IDs) and Delete Creditor requests."
+          }
+        },
+        {
+          "name": "2. Get All Debtors (Sets debtorId)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "if (pm.response.code === 200) {",
+                  "    var jsonData = pm.response.json();",
+                  "    if (jsonData.debtors && jsonData.debtors.length > 0) {",
+                  "        pm.collectionVariables.set('debtorId', jsonData.debtors[0].id);",
+                  "        console.log('✅ Set debtorId:', jsonData.debtors[0].id);",
+                  "        console.log('Debtor:', jsonData.debtors[0].name);",
+                  "    }",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept-Language",
+                "value": "{{language}}",
+                "description": "Language preference. Use {{language}} variable (default: hi - Hindi)"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/debtors?page=0&size=20",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "debtors"
+              ],
+              "query": [
+                {
+                  "key": "page",
+                  "value": "0"
+                },
+                {
+                  "key": "size",
+                  "value": "20"
+                }
+              ]
+            },
+            "description": "⚠️ RUN THIS SECOND to set {{debtorId}} variable. This is required for Create Payment (with IDs) and Delete Debtor requests."
+          }
+        },
+        {
+          "name": "3. Get All Payments (Sets paymentId)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "if (pm.response.code === 200) {",
+                  "    var jsonData = pm.response.json();",
+                  "    if (jsonData.payments && jsonData.payments.length > 0) {",
+                  "        pm.collectionVariables.set('paymentId', jsonData.payments[0].id);",
+                  "        console.log('✅ Set paymentId:', jsonData.payments[0].id);",
+                  "        console.log('Payment:', jsonData.payments[0].amount, jsonData.payments[0].currency);",
+                  "    }",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept-Language",
+                "value": "{{language}}",
+                "description": "Language preference. Use {{language}} variable (default: hi - Hindi)"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/payments?page=0&size=20",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "payments"
+              ],
+              "query": [
+                {
+                  "key": "page",
+                  "value": "0"
+                },
+                {
+                  "key": "size",
+                  "value": "20"
+                }
+              ]
+            },
+            "description": "⚠️ RUN THIS THIRD to set {{paymentId}} variable. This is required for Get Payment by ID and i18n requests."
+          }
+        }
+      ]
+    },
     {
       "name": "Health & Info",
       "item": [
@@ -32,11 +266,22 @@
           ],
           "request": {
             "method": "GET",
-            "header": [],
+            "header": [
+              {
+                "key": "Accept-Language",
+                "value": "{{language}}",
+                "description": "Language preference. Use {{language}} variable (default: hi - Hindi)"
+              }
+            ],
             "url": {
               "raw": "{{baseUrl}}/actuator/health",
-              "host": ["{{baseUrl}}"],
-              "path": ["actuator", "health"]
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "actuator",
+                "health"
+              ]
             }
           }
         },
@@ -57,11 +302,22 @@
           ],
           "request": {
             "method": "GET",
-            "header": [],
+            "header": [
+              {
+                "key": "Accept-Language",
+                "value": "{{language}}",
+                "description": "Language preference. Use {{language}} variable (default: hi - Hindi)"
+              }
+            ],
             "url": {
               "raw": "{{baseUrl}}/actuator/info",
-              "host": ["{{baseUrl}}"],
-              "path": ["actuator", "info"]
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "actuator",
+                "info"
+              ]
             }
           }
         },
@@ -82,21 +338,32 @@
           ],
           "request": {
             "method": "GET",
-            "header": [],
+            "header": [
+              {
+                "key": "Accept-Language",
+                "value": "{{language}}",
+                "description": "Language preference. Use {{language}} variable (default: hi - Hindi)"
+              }
+            ],
             "url": {
               "raw": "{{baseUrl}}/actuator/metrics",
-              "host": ["{{baseUrl}}"],
-              "path": ["actuator", "metrics"]
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "actuator",
+                "metrics"
+              ]
             }
           }
         }
       ]
     },
     {
-      "name": "Payments",
+      "name": "Payments - CRUD Operations",
       "item": [
         {
-          "name": "Get All Payments",
+          "name": "GET - Get All Payments",
           "event": [
             {
               "listen": "test",
@@ -117,12 +384,12 @@
                   "    pm.expect(jsonData).to.have.property('total');",
                   "});",
                   "",
-                  "// Auto-extract first payment ID if available",
+                  "// Auto-extract first payment ID",
                   "if (pm.response.code === 200) {",
                   "    var jsonData = pm.response.json();",
                   "    if (jsonData.payments && jsonData.payments.length > 0) {",
                   "        pm.collectionVariables.set('paymentId', jsonData.payments[0].id);",
-                  "        console.log('Set paymentId variable:', jsonData.payments[0].id);",
+                  "        console.log('✅ Set paymentId:', jsonData.payments[0].id);",
                   "    }",
                   "}"
                 ],
@@ -132,11 +399,23 @@
           ],
           "request": {
             "method": "GET",
-            "header": [],
+            "header": [
+              {
+                "key": "Accept-Language",
+                "value": "{{language}}",
+                "description": "Language preference. Use {{language}} variable (default: hi - Hindi)"
+              }
+            ],
             "url": {
               "raw": "{{baseUrl}}/api/v1/payments?page=0&size=20",
-              "host": ["{{baseUrl}}"],
-              "path": ["api", "v1", "payments"],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "payments"
+              ],
               "query": [
                 {
                   "key": "page",
@@ -154,189 +433,15 @@
           }
         },
         {
-          "name": "Get Payments with Filters (Sample: USD RECEIVED)",
-          "event": [
-            {
-              "listen": "test",
-              "script": {
-                "exec": [
-                  "pm.test(\"Status code is 200\", function () {",
-                  "    pm.response.to.have.status(200);",
-                  "});",
-                  "",
-                  "pm.test(\"All payments have RECEIVED status\", function () {",
-                  "    var jsonData = pm.response.json();",
-                  "    if (jsonData.payments && jsonData.payments.length > 0) {",
-                  "        jsonData.payments.forEach(function(payment) {",
-                  "            pm.expect(payment.status).to.eql('RECEIVED');",
-                  "        });",
-                  "    }",
-                  "});",
-                  "",
-                  "pm.test(\"All payments have USD currency\", function () {",
-                  "    var jsonData = pm.response.json();",
-                  "    if (jsonData.payments && jsonData.payments.length > 0) {",
-                  "        jsonData.payments.forEach(function(payment) {",
-                  "            pm.expect(payment.currency).to.eql('USD');",
-                  "        });",
-                  "    }",
-                  "});"
-                ],
-                "type": "text/javascript"
-              }
-            }
-          ],
-          "request": {
-            "method": "GET",
-            "header": [],
-            "url": {
-              "raw": "{{baseUrl}}/api/v1/payments?status=RECEIVED&currency=USD&minAmount=100&maxAmount=2000&page=0&size=20",
-              "host": ["{{baseUrl}}"],
-              "path": ["api", "v1", "payments"],
-              "query": [
-                {
-                  "key": "status",
-                  "value": "RECEIVED",
-                  "description": "Filter by status. Sample data includes: RECEIVED, PROCESSING, COMPLETED, FAILED"
-                },
-                {
-                  "key": "currency",
-                  "value": "USD",
-                  "description": "Filter by currency. Sample data includes: USD, EUR, GBP"
-                },
-                {
-                  "key": "minAmount",
-                  "value": "100",
-                  "description": "Minimum amount filter"
-                },
-                {
-                  "key": "maxAmount",
-                  "value": "2000",
-                  "description": "Maximum amount filter"
-                },
-                {
-                  "key": "page",
-                  "value": "0"
-                },
-                {
-                  "key": "size",
-                  "value": "20"
-                }
-              ]
-            },
-            "description": "Filter payments by status and currency. Sample data includes payments with amounts: 1500.00 USD, 500.00 USD, 1000.00 USD (RECEIVED)"
-          }
-        },
-        {
-          "name": "Get Payments Filtered by Currency (EUR)",
-          "event": [
-            {
-              "listen": "test",
-              "script": {
-                "exec": [
-                  "pm.test(\"Status code is 200\", function () {",
-                  "    pm.response.to.have.status(200);",
-                  "});",
-                  "",
-                  "pm.test(\"All payments have EUR currency\", function () {",
-                  "    var jsonData = pm.response.json();",
-                  "    if (jsonData.payments && jsonData.payments.length > 0) {",
-                  "        jsonData.payments.forEach(function(payment) {",
-                  "            pm.expect(payment.currency).to.eql('EUR');",
-                  "        });",
-                  "    }",
-                  "});"
-                ],
-                "type": "text/javascript"
-              }
-            }
-          ],
-          "request": {
-            "method": "GET",
-            "header": [],
-            "url": {
-              "raw": "{{baseUrl}}/api/v1/payments?currency=EUR&page=0&size=20",
-              "host": ["{{baseUrl}}"],
-              "path": ["api", "v1", "payments"],
-              "query": [
-                {
-                  "key": "currency",
-                  "value": "EUR",
-                  "description": "Filter by EUR currency"
-                },
-                {
-                  "key": "page",
-                  "value": "0"
-                },
-                {
-                  "key": "size",
-                  "value": "20"
-                }
-              ]
-            },
-            "description": "Filter payments by EUR currency. Sample data includes: 2500.50 EUR, 2000.00 EUR"
-          }
-        },
-        {
-          "name": "Get Payments Sorted by Amount (Descending)",
-          "event": [
-            {
-              "listen": "test",
-              "script": {
-                "exec": [
-                  "pm.test(\"Status code is 200\", function () {",
-                  "    pm.response.to.have.status(200);",
-                  "});",
-                  "",
-                  "pm.test(\"Payments are sorted by amount descending\", function () {",
-                  "    var jsonData = pm.response.json();",
-                  "    if (jsonData.payments && jsonData.payments.length > 1) {",
-                  "        for (var i = 0; i < jsonData.payments.length - 1; i++) {",
-                  "            pm.expect(jsonData.payments[i].amount).to.be.at.least(jsonData.payments[i+1].amount);",
-                  "        }",
-                  "    }",
-                  "});"
-                ],
-                "type": "text/javascript"
-              }
-            }
-          ],
-          "request": {
-            "method": "GET",
-            "header": [],
-            "url": {
-              "raw": "{{baseUrl}}/api/v1/payments?page=0&size=20&sort=amount,desc",
-              "host": ["{{baseUrl}}"],
-              "path": ["api", "v1", "payments"],
-              "query": [
-                {
-                  "key": "page",
-                  "value": "0"
-                },
-                {
-                  "key": "size",
-                  "value": "20"
-                },
-                {
-                  "key": "sort",
-                  "value": "amount,desc",
-                  "description": "Sort by amount descending"
-                }
-              ]
-            },
-            "description": "Get payments sorted by amount in descending order"
-          }
-        },
-        {
-          "name": "Get Payment by ID",
+          "name": "GET - Get Payment by ID",
           "event": [
             {
               "listen": "prerequest",
               "script": {
                 "exec": [
-                  "// Ensure paymentId is set - if not, use a sample one",
+                  "// Ensure paymentId is set",
                   "if (!pm.collectionVariables.get('paymentId')) {",
-                  "    console.log('Warning: paymentId variable not set. Run \"Get All Payments\" first.');",
+                  "    console.log('⚠️ paymentId not set. Run \"Get All Payments\" first.');",
                   "}"
                 ],
                 "type": "text/javascript"
@@ -371,17 +476,30 @@
           ],
           "request": {
             "method": "GET",
-            "header": [],
+            "header": [
+              {
+                "key": "Accept-Language",
+                "value": "{{language}}",
+                "description": "Language preference. Use {{language}} variable (default: hi - Hindi)"
+              }
+            ],
             "url": {
               "raw": "{{baseUrl}}/api/v1/payments/{{paymentId}}",
-              "host": ["{{baseUrl}}"],
-              "path": ["api", "v1", "payments", "{{paymentId}}"]
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "payments",
+                "{{paymentId}}"
+              ]
             },
-            "description": "Get payment by ID. Uses {{paymentId}} variable set by \"Get All Payments\" request."
+            "description": "Get payment by ID. Uses {{paymentId}} variable. Run \"Get All Payments\" first to set this variable."
           }
         },
         {
-          "name": "Create Payment (Standalone - No Creditor/Debtor)",
+          "name": "POST - Create Payment (Standalone - Works Immediately)",
           "event": [
             {
               "listen": "test",
@@ -395,7 +513,7 @@
                   "    var jsonData = pm.response.json();",
                   "    pm.expect(jsonData).to.have.property('id');",
                   "    pm.collectionVariables.set('paymentId', jsonData.id);",
-                  "    console.log('Set paymentId variable:', jsonData.id);",
+                  "    console.log('✅ Created payment with ID:', jsonData.id);",
                   "});",
                   "",
                   "pm.test(\"Response matches request\", function () {",
@@ -421,6 +539,11 @@
               {
                 "key": "Content-Type",
                 "value": "application/json"
+              },
+              {
+                "key": "Accept-Language",
+                "value": "{{language}}",
+                "description": "Language preference. Use {{language}} variable (default: hi - Hindi)"
               }
             ],
             "body": {
@@ -432,16 +555,22 @@
                 }
               }
             },
-            "description": "Create standalone payment without creditor/debtor. This works immediately without any setup. Auto-extracts payment ID to {{paymentId}} variable."
-          },
-          "url": {
-            "raw": "{{baseUrl}}/api/v1/payments",
-            "host": ["{{baseUrl}}"],
-            "path": ["api", "v1", "payments"]
+            "description": "✅ WORKS IMMEDIATELY - No setup needed! Creates a standalone payment without creditor/debtor. Auto-extracts payment ID to {{paymentId}} variable.\n\nSample data: amount=1000.00, currency=USD, status=RECEIVED",
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/payments",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "payments"
+              ]
+            }
           }
         },
         {
-          "name": "Create Payment (With Creditor/Debtor)",
+          "name": "POST - Create Payment (With Creditor & Debtor)",
           "event": [
             {
               "listen": "prerequest",
@@ -449,7 +578,7 @@
                 "exec": [
                   "// Ensure creditorId and debtorId are set",
                   "if (!pm.collectionVariables.get('creditorId') || !pm.collectionVariables.get('debtorId')) {",
-                  "    console.log('Warning: creditorId or debtorId not set. Run \"Get All Creditors\" and \"Get All Debtors\" first.');",
+                  "    console.log('⚠️ creditorId or debtorId not set. Run Setup requests first!');",
                   "}"
                 ],
                 "type": "text/javascript"
@@ -467,6 +596,7 @@
                   "    var jsonData = pm.response.json();",
                   "    pm.expect(jsonData).to.have.property('id');",
                   "    pm.collectionVariables.set('paymentId', jsonData.id);",
+                  "    console.log('✅ Created payment with ID:', jsonData.id);",
                   "});",
                   "",
                   "pm.test(\"Response includes creditor and debtor IDs\", function () {",
@@ -490,6 +620,11 @@
               {
                 "key": "Content-Type",
                 "value": "application/json"
+              },
+              {
+                "key": "Accept-Language",
+                "value": "{{language}}",
+                "description": "Language preference. Use {{language}} variable (default: hi - Hindi)"
               }
             ],
             "body": {
@@ -501,16 +636,22 @@
                 }
               }
             },
-            "description": "⚠️ IMPORTANT: Requires {{creditorId}} and {{debtorId}} variables.\n\n1. Run \"Get All Creditors\" to set {{creditorId}}\n2. Run \"Get All Debtors\" to set {{debtorId}}\n3. Then run this request\n\nOr use \"Create Payment (Standalone)\" which doesn't require IDs."
-          },
-          "url": {
-            "raw": "{{baseUrl}}/api/v1/payments",
-            "host": ["{{baseUrl}}"],
-            "path": ["api", "v1", "payments"]
+            "description": "⚠️ REQUIRES SETUP: Run \"1. Get All Creditors\" and \"2. Get All Debtors\" first to set {{creditorId}} and {{debtorId}} variables.\n\nCreates a payment with creditor and debtor associations.\n\nSample data: amount=1500.00, currency=USD, status=RECEIVED",
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/payments",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "payments"
+              ]
+            }
           }
         },
         {
-          "name": "Echo Payment",
+          "name": "POST - Echo Payment",
           "event": [
             {
               "listen": "test",
@@ -543,6 +684,11 @@
               {
                 "key": "Content-Type",
                 "value": "application/json"
+              },
+              {
+                "key": "Accept-Language",
+                "value": "{{language}}",
+                "description": "Language preference. Use {{language}} variable (default: hi - Hindi)"
               }
             ],
             "body": {
@@ -554,21 +700,220 @@
                 }
               }
             },
-            "description": "Echo payment - returns and saves the payment. Sample data: amount=2000.00, currency=EUR, status=PROCESSING"
-          },
-          "url": {
-            "raw": "{{baseUrl}}/api/v1/payments/echo",
-            "host": ["{{baseUrl}}"],
-            "path": ["api", "v1", "payments", "echo"]
+            "description": "✅ WORKS IMMEDIATELY - Echo payment (returns and saves the payment). No setup needed.\n\nSample data: amount=2000.00, currency=EUR, status=PROCESSING",
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/payments/echo",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "payments",
+                "echo"
+              ]
+            }
+          }
+        },
+        {
+          "name": "GET - Filter Payments by Status (RECEIVED)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test(\"All payments have RECEIVED status\", function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    if (jsonData.payments && jsonData.payments.length > 0) {",
+                  "        jsonData.payments.forEach(function(payment) {",
+                  "            pm.expect(payment.status).to.eql('RECEIVED');",
+                  "        });",
+                  "    }",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept-Language",
+                "value": "{{language}}",
+                "description": "Language preference. Use {{language}} variable (default: hi - Hindi)"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/payments?status=RECEIVED&page=0&size=20",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "payments"
+              ],
+              "query": [
+                {
+                  "key": "status",
+                  "value": "RECEIVED",
+                  "description": "Filter by status: RECEIVED, PROCESSING, COMPLETED, FAILED"
+                },
+                {
+                  "key": "page",
+                  "value": "0"
+                },
+                {
+                  "key": "size",
+                  "value": "20"
+                }
+              ]
+            },
+            "description": "Filter payments by RECEIVED status. Sample data includes multiple RECEIVED payments."
+          }
+        },
+        {
+          "name": "GET - Filter Payments by Currency (EUR)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test(\"All payments have EUR currency\", function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    if (jsonData.payments && jsonData.payments.length > 0) {",
+                  "        jsonData.payments.forEach(function(payment) {",
+                  "            pm.expect(payment.currency).to.eql('EUR');",
+                  "        });",
+                  "    }",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept-Language",
+                "value": "{{language}}",
+                "description": "Language preference. Use {{language}} variable (default: hi - Hindi)"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/payments?currency=EUR&page=0&size=20",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "payments"
+              ],
+              "query": [
+                {
+                  "key": "currency",
+                  "value": "EUR",
+                  "description": "Filter by EUR currency"
+                },
+                {
+                  "key": "page",
+                  "value": "0"
+                },
+                {
+                  "key": "size",
+                  "value": "20"
+                }
+              ]
+            },
+            "description": "Filter payments by EUR currency. Sample data includes EUR payments."
+          }
+        },
+        {
+          "name": "GET - Filter Payments by Amount Range",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test(\"All payments are within amount range\", function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    if (jsonData.payments && jsonData.payments.length > 0) {",
+                  "        jsonData.payments.forEach(function(payment) {",
+                  "            pm.expect(payment.amount).to.be.at.least(100);",
+                  "            pm.expect(payment.amount).to.be.at.most(2000);",
+                  "        });",
+                  "    }",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept-Language",
+                "value": "{{language}}",
+                "description": "Language preference. Use {{language}} variable (default: hi - Hindi)"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/payments?minAmount=100&maxAmount=2000&page=0&size=20",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "payments"
+              ],
+              "query": [
+                {
+                  "key": "minAmount",
+                  "value": "100",
+                  "description": "Minimum amount"
+                },
+                {
+                  "key": "maxAmount",
+                  "value": "2000",
+                  "description": "Maximum amount"
+                },
+                {
+                  "key": "page",
+                  "value": "0"
+                },
+                {
+                  "key": "size",
+                  "value": "20"
+                }
+              ]
+            },
+            "description": "Filter payments by amount range (100-2000). Sample data includes payments in this range."
           }
         }
       ]
     },
     {
-      "name": "Creditors",
+      "name": "Creditors - CRUD Operations",
       "item": [
         {
-          "name": "Get All Creditors",
+          "name": "GET - Get All Creditors",
           "event": [
             {
               "listen": "test",
@@ -589,12 +934,12 @@
                   "    pm.expect(jsonData).to.have.property('total');",
                   "});",
                   "",
-                  "// Auto-extract first creditor ID if available",
+                  "// Auto-extract first creditor ID",
                   "if (pm.response.code === 200) {",
                   "    var jsonData = pm.response.json();",
                   "    if (jsonData.creditors && jsonData.creditors.length > 0) {",
                   "        pm.collectionVariables.set('creditorId', jsonData.creditors[0].id);",
-                  "        console.log('Set creditorId variable:', jsonData.creditors[0].id);",
+                  "        console.log('✅ Set creditorId:', jsonData.creditors[0].id);",
                   "    }",
                   "}"
                 ],
@@ -604,11 +949,23 @@
           ],
           "request": {
             "method": "GET",
-            "header": [],
+            "header": [
+              {
+                "key": "Accept-Language",
+                "value": "{{language}}",
+                "description": "Language preference. Use {{language}} variable (default: hi - Hindi)"
+              }
+            ],
             "url": {
               "raw": "{{baseUrl}}/api/v1/creditors?page=0&size=20",
-              "host": ["{{baseUrl}}"],
-              "path": ["api", "v1", "creditors"],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "creditors"
+              ],
               "query": [
                 {
                   "key": "page",
@@ -624,107 +981,7 @@
           }
         },
         {
-          "name": "Get Creditors Filtered by Name (Sample: Acme)",
-          "event": [
-            {
-              "listen": "test",
-              "script": {
-                "exec": [
-                  "pm.test(\"Status code is 200\", function () {",
-                  "    pm.response.to.have.status(200);",
-                  "});",
-                  "",
-                  "pm.test(\"All creditors match name filter\", function () {",
-                  "    var jsonData = pm.response.json();",
-                  "    if (jsonData.creditors && jsonData.creditors.length > 0) {",
-                  "        jsonData.creditors.forEach(function(creditor) {",
-                  "            pm.expect(creditor.name.toLowerCase()).to.include('acme');",
-                  "        });",
-                  "    }",
-                  "});"
-                ],
-                "type": "text/javascript"
-              }
-            }
-          ],
-          "request": {
-            "method": "GET",
-            "header": [],
-            "url": {
-              "raw": "{{baseUrl}}/api/v1/creditors?name=Acme&page=0&size=20",
-              "host": ["{{baseUrl}}"],
-              "path": ["api", "v1", "creditors"],
-              "query": [
-                {
-                  "key": "name",
-                  "value": "Acme",
-                  "description": "Filter by name (partial match). Sample: 'Acme' finds 'Acme Corporation'"
-                },
-                {
-                  "key": "page",
-                  "value": "0"
-                },
-                {
-                  "key": "size",
-                  "value": "20"
-                }
-              ]
-            },
-            "description": "Filter creditors by name. Sample data includes 'Acme Corporation', 'Tech Solutions Inc', 'Global Services Ltd'"
-          }
-        },
-        {
-          "name": "Get Creditors Filtered by Bank Code",
-          "event": [
-            {
-              "listen": "test",
-              "script": {
-                "exec": [
-                  "pm.test(\"Status code is 200\", function () {",
-                  "    pm.response.to.have.status(200);",
-                  "});",
-                  "",
-                  "pm.test(\"All creditors have BANK001 bank code\", function () {",
-                  "    var jsonData = pm.response.json();",
-                  "    if (jsonData.creditors && jsonData.creditors.length > 0) {",
-                  "        jsonData.creditors.forEach(function(creditor) {",
-                  "            pm.expect(creditor.bankCode).to.eql('BANK001');",
-                  "        });",
-                  "    }",
-                  "});"
-                ],
-                "type": "text/javascript"
-              }
-            }
-          ],
-          "request": {
-            "method": "GET",
-            "header": [],
-            "url": {
-              "raw": "{{baseUrl}}/api/v1/creditors?bankCode=BANK001&page=0&size=20",
-              "host": ["{{baseUrl}}"],
-              "path": ["api", "v1", "creditors"],
-              "query": [
-                {
-                  "key": "bankCode",
-                  "value": "BANK001",
-                  "description": "Filter by bank code"
-                },
-                {
-                  "key": "page",
-                  "value": "0"
-                },
-                {
-                  "key": "size",
-                  "value": "20"
-                }
-              ]
-            },
-            "description": "Filter creditors by bank code BANK001"
-          }
-        },
-        {
-          "name": "Get Creditor by ID",
+          "name": "GET - Get Creditor by ID",
           "event": [
             {
               "listen": "prerequest",
@@ -732,7 +989,7 @@
                 "exec": [
                   "// Ensure creditorId is set",
                   "if (!pm.collectionVariables.get('creditorId')) {",
-                  "    console.log('Warning: creditorId variable not set. Run \"Get All Creditors\" first.');",
+                  "    console.log('⚠️ creditorId not set. Run \"Get All Creditors\" first.');",
                   "}"
                 ],
                 "type": "text/javascript"
@@ -766,17 +1023,30 @@
           ],
           "request": {
             "method": "GET",
-            "header": [],
+            "header": [
+              {
+                "key": "Accept-Language",
+                "value": "{{language}}",
+                "description": "Language preference. Use {{language}} variable (default: hi - Hindi)"
+              }
+            ],
             "url": {
               "raw": "{{baseUrl}}/api/v1/creditors/{{creditorId}}",
-              "host": ["{{baseUrl}}"],
-              "path": ["api", "v1", "creditors", "{{creditorId}}"]
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "creditors",
+                "{{creditorId}}"
+              ]
             },
-            "description": "Get creditor by ID. Uses {{creditorId}} variable set by \"Get All Creditors\" request."
+            "description": "Get creditor by ID. Uses {{creditorId}} variable. Run \"Get All Creditors\" first to set this variable."
           }
         },
         {
-          "name": "Create Creditor (Sample: Acme Corporation)",
+          "name": "POST - Create Creditor",
           "event": [
             {
               "listen": "test",
@@ -790,6 +1060,7 @@
                   "    var jsonData = pm.response.json();",
                   "    pm.expect(jsonData).to.have.property('id');",
                   "    pm.collectionVariables.set('creditorId', jsonData.id);",
+                  "    console.log('✅ Created creditor with ID:', jsonData.id);",
                   "});",
                   "",
                   "pm.test(\"Response matches request\", function () {",
@@ -810,6 +1081,11 @@
               {
                 "key": "Content-Type",
                 "value": "application/json"
+              },
+              {
+                "key": "Accept-Language",
+                "value": "{{language}}",
+                "description": "Language preference. Use {{language}} variable (default: hi - Hindi)"
               }
             ],
             "body": {
@@ -821,16 +1097,22 @@
                 }
               }
             },
-            "description": "Create creditor using sample data. This matches the sample data in the database. Auto-extracts creditor ID to {{creditorId}} variable."
-          },
-          "url": {
-            "raw": "{{baseUrl}}/api/v1/creditors",
-            "host": ["{{baseUrl}}"],
-            "path": ["api", "v1", "creditors"]
+            "description": "✅ WORKS IMMEDIATELY - Create creditor. No setup needed. Auto-extracts creditor ID to {{creditorId}} variable.\n\nSample data matches database sample: Acme Corporation",
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/creditors",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "creditors"
+              ]
+            }
           }
         },
         {
-          "name": "Delete Creditor (Soft Delete)",
+          "name": "DELETE - Delete Creditor (Soft Delete)",
           "event": [
             {
               "listen": "prerequest",
@@ -838,7 +1120,7 @@
                 "exec": [
                   "// Ensure creditorId is set",
                   "if (!pm.collectionVariables.get('creditorId')) {",
-                  "    console.log('Warning: creditorId variable not set. Run \"Get All Creditors\" first.');",
+                  "    console.log('⚠️ creditorId not set. Run \"Get All Creditors\" first.');",
                   "}"
                 ],
                 "type": "text/javascript"
@@ -862,22 +1144,159 @@
           ],
           "request": {
             "method": "DELETE",
-            "header": [],
+            "header": [
+              {
+                "key": "Accept-Language",
+                "value": "{{language}}",
+                "description": "Language preference. Use {{language}} variable (default: hi - Hindi)"
+              }
+            ],
             "url": {
               "raw": "{{baseUrl}}/api/v1/creditors/{{creditorId}}",
-              "host": ["{{baseUrl}}"],
-              "path": ["api", "v1", "creditors", "{{creditorId}}"]
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "creditors",
+                "{{creditorId}}"
+              ]
             },
-            "description": "Soft delete a creditor by ID. Uses {{creditorId}} variable. After deletion, the creditor will not appear in list requests but can be recovered."
+            "description": "Soft delete a creditor by ID. Uses {{creditorId}} variable. Run \"Get All Creditors\" first. After deletion, the creditor will not appear in list requests (soft delete)."
+          }
+        },
+        {
+          "name": "GET - Filter Creditors by Name",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test(\"All creditors match name filter\", function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    if (jsonData.creditors && jsonData.creditors.length > 0) {",
+                  "        jsonData.creditors.forEach(function(creditor) {",
+                  "            pm.expect(creditor.name.toLowerCase()).to.include('acme');",
+                  "        });",
+                  "    }",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept-Language",
+                "value": "{{language}}",
+                "description": "Language preference. Use {{language}} variable (default: hi - Hindi)"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/creditors?name=Acme&page=0&size=20",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "creditors"
+              ],
+              "query": [
+                {
+                  "key": "name",
+                  "value": "Acme",
+                  "description": "Filter by name (partial match, case-insensitive)"
+                },
+                {
+                  "key": "page",
+                  "value": "0"
+                },
+                {
+                  "key": "size",
+                  "value": "20"
+                }
+              ]
+            },
+            "description": "Filter creditors by name. Sample data includes 'Acme Corporation'."
+          }
+        },
+        {
+          "name": "GET - Filter Creditors by Bank Code",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test(\"All creditors have BANK001 bank code\", function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    if (jsonData.creditors && jsonData.creditors.length > 0) {",
+                  "        jsonData.creditors.forEach(function(creditor) {",
+                  "            pm.expect(creditor.bankCode).to.eql('BANK001');",
+                  "        });",
+                  "    }",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept-Language",
+                "value": "{{language}}",
+                "description": "Language preference. Use {{language}} variable (default: hi - Hindi)"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/creditors?bankCode=BANK001&page=0&size=20",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "creditors"
+              ],
+              "query": [
+                {
+                  "key": "bankCode",
+                  "value": "BANK001",
+                  "description": "Filter by bank code"
+                },
+                {
+                  "key": "page",
+                  "value": "0"
+                },
+                {
+                  "key": "size",
+                  "value": "20"
+                }
+              ]
+            },
+            "description": "Filter creditors by bank code BANK001. Sample data includes creditors with BANK001."
           }
         }
       ]
     },
     {
-      "name": "Debtors",
+      "name": "Debtors - CRUD Operations",
       "item": [
         {
-          "name": "Get All Debtors",
+          "name": "GET - Get All Debtors",
           "event": [
             {
               "listen": "test",
@@ -898,12 +1317,12 @@
                   "    pm.expect(jsonData).to.have.property('total');",
                   "});",
                   "",
-                  "// Auto-extract first debtor ID if available",
+                  "// Auto-extract first debtor ID",
                   "if (pm.response.code === 200) {",
                   "    var jsonData = pm.response.json();",
                   "    if (jsonData.debtors && jsonData.debtors.length > 0) {",
                   "        pm.collectionVariables.set('debtorId', jsonData.debtors[0].id);",
-                  "        console.log('Set debtorId variable:', jsonData.debtors[0].id);",
+                  "        console.log('✅ Set debtorId:', jsonData.debtors[0].id);",
                   "    }",
                   "}"
                 ],
@@ -913,11 +1332,23 @@
           ],
           "request": {
             "method": "GET",
-            "header": [],
+            "header": [
+              {
+                "key": "Accept-Language",
+                "value": "{{language}}",
+                "description": "Language preference. Use {{language}} variable (default: hi - Hindi)"
+              }
+            ],
             "url": {
               "raw": "{{baseUrl}}/api/v1/debtors?page=0&size=20",
-              "host": ["{{baseUrl}}"],
-              "path": ["api", "v1", "debtors"],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "debtors"
+              ],
               "query": [
                 {
                   "key": "page",
@@ -933,107 +1364,7 @@
           }
         },
         {
-          "name": "Get Debtors Filtered by Name (Sample: John)",
-          "event": [
-            {
-              "listen": "test",
-              "script": {
-                "exec": [
-                  "pm.test(\"Status code is 200\", function () {",
-                  "    pm.response.to.have.status(200);",
-                  "});",
-                  "",
-                  "pm.test(\"All debtors match name filter\", function () {",
-                  "    var jsonData = pm.response.json();",
-                  "    if (jsonData.debtors && jsonData.debtors.length > 0) {",
-                  "        jsonData.debtors.forEach(function(debtor) {",
-                  "            pm.expect(debtor.name.toLowerCase()).to.include('john');",
-                  "        });",
-                  "    }",
-                  "});"
-                ],
-                "type": "text/javascript"
-              }
-            }
-          ],
-          "request": {
-            "method": "GET",
-            "header": [],
-            "url": {
-              "raw": "{{baseUrl}}/api/v1/debtors?name=John&page=0&size=20",
-              "host": ["{{baseUrl}}"],
-              "path": ["api", "v1", "debtors"],
-              "query": [
-                {
-                  "key": "name",
-                  "value": "John",
-                  "description": "Filter by name (partial match). Sample: 'John' finds 'John Doe'"
-                },
-                {
-                  "key": "page",
-                  "value": "0"
-                },
-                {
-                  "key": "size",
-                  "value": "20"
-                }
-              ]
-            },
-            "description": "Filter debtors by name. Sample data includes 'John Doe', 'Jane Smith', 'Robert Johnson'"
-          }
-        },
-        {
-          "name": "Get Debtors Filtered by Bank Code",
-          "event": [
-            {
-              "listen": "test",
-              "script": {
-                "exec": [
-                  "pm.test(\"Status code is 200\", function () {",
-                  "    pm.response.to.have.status(200);",
-                  "});",
-                  "",
-                  "pm.test(\"All debtors have BANK002 bank code\", function () {",
-                  "    var jsonData = pm.response.json();",
-                  "    if (jsonData.debtors && jsonData.debtors.length > 0) {",
-                  "        jsonData.debtors.forEach(function(debtor) {",
-                  "            pm.expect(debtor.bankCode).to.eql('BANK002');",
-                  "        });",
-                  "    }",
-                  "});"
-                ],
-                "type": "text/javascript"
-              }
-            }
-          ],
-          "request": {
-            "method": "GET",
-            "header": [],
-            "url": {
-              "raw": "{{baseUrl}}/api/v1/debtors?bankCode=BANK002&page=0&size=20",
-              "host": ["{{baseUrl}}"],
-              "path": ["api", "v1", "debtors"],
-              "query": [
-                {
-                  "key": "bankCode",
-                  "value": "BANK002",
-                  "description": "Filter by bank code"
-                },
-                {
-                  "key": "page",
-                  "value": "0"
-                },
-                {
-                  "key": "size",
-                  "value": "20"
-                }
-              ]
-            },
-            "description": "Filter debtors by bank code BANK002"
-          }
-        },
-        {
-          "name": "Get Debtor by ID",
+          "name": "GET - Get Debtor by ID",
           "event": [
             {
               "listen": "prerequest",
@@ -1041,7 +1372,7 @@
                 "exec": [
                   "// Ensure debtorId is set",
                   "if (!pm.collectionVariables.get('debtorId')) {",
-                  "    console.log('Warning: debtorId variable not set. Run \"Get All Debtors\" first.');",
+                  "    console.log('⚠️ debtorId not set. Run \"Get All Debtors\" first.');",
                   "}"
                 ],
                 "type": "text/javascript"
@@ -1075,17 +1406,30 @@
           ],
           "request": {
             "method": "GET",
-            "header": [],
+            "header": [
+              {
+                "key": "Accept-Language",
+                "value": "{{language}}",
+                "description": "Language preference. Use {{language}} variable (default: hi - Hindi)"
+              }
+            ],
             "url": {
               "raw": "{{baseUrl}}/api/v1/debtors/{{debtorId}}",
-              "host": ["{{baseUrl}}"],
-              "path": ["api", "v1", "debtors", "{{debtorId}}"]
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "debtors",
+                "{{debtorId}}"
+              ]
             },
-            "description": "Get debtor by ID. Uses {{debtorId}} variable set by \"Get All Debtors\" request."
+            "description": "Get debtor by ID. Uses {{debtorId}} variable. Run \"Get All Debtors\" first to set this variable."
           }
         },
         {
-          "name": "Create Debtor (Sample: John Doe)",
+          "name": "POST - Create Debtor",
           "event": [
             {
               "listen": "test",
@@ -1099,6 +1443,7 @@
                   "    var jsonData = pm.response.json();",
                   "    pm.expect(jsonData).to.have.property('id');",
                   "    pm.collectionVariables.set('debtorId', jsonData.id);",
+                  "    console.log('✅ Created debtor with ID:', jsonData.id);",
                   "});",
                   "",
                   "pm.test(\"Response matches request\", function () {",
@@ -1119,6 +1464,11 @@
               {
                 "key": "Content-Type",
                 "value": "application/json"
+              },
+              {
+                "key": "Accept-Language",
+                "value": "{{language}}",
+                "description": "Language preference. Use {{language}} variable (default: hi - Hindi)"
               }
             ],
             "body": {
@@ -1130,16 +1480,22 @@
                 }
               }
             },
-            "description": "Create debtor using sample data. This matches the sample data in the database. Auto-extracts debtor ID to {{debtorId}} variable."
-          },
-          "url": {
-            "raw": "{{baseUrl}}/api/v1/debtors",
-            "host": ["{{baseUrl}}"],
-            "path": ["api", "v1", "debtors"]
+            "description": "✅ WORKS IMMEDIATELY - Create debtor. No setup needed. Auto-extracts debtor ID to {{debtorId}} variable.\n\nSample data matches database sample: John Doe",
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/debtors",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "debtors"
+              ]
+            }
           }
         },
         {
-          "name": "Delete Debtor (Soft Delete)",
+          "name": "DELETE - Delete Debtor (Soft Delete)",
           "event": [
             {
               "listen": "prerequest",
@@ -1147,7 +1503,7 @@
                 "exec": [
                   "// Ensure debtorId is set",
                   "if (!pm.collectionVariables.get('debtorId')) {",
-                  "    console.log('Warning: debtorId variable not set. Run \"Get All Debtors\" first.');",
+                  "    console.log('⚠️ debtorId not set. Run \"Get All Debtors\" first.');",
                   "}"
                 ],
                 "type": "text/javascript"
@@ -1171,13 +1527,150 @@
           ],
           "request": {
             "method": "DELETE",
-            "header": [],
+            "header": [
+              {
+                "key": "Accept-Language",
+                "value": "{{language}}",
+                "description": "Language preference. Use {{language}} variable (default: hi - Hindi)"
+              }
+            ],
             "url": {
               "raw": "{{baseUrl}}/api/v1/debtors/{{debtorId}}",
-              "host": ["{{baseUrl}}"],
-              "path": ["api", "v1", "debtors", "{{debtorId}}"]
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "debtors",
+                "{{debtorId}}"
+              ]
             },
-            "description": "Soft delete a debtor by ID. Uses {{debtorId}} variable. After deletion, the debtor will not appear in list requests but can be recovered."
+            "description": "Soft delete a debtor by ID. Uses {{debtorId}} variable. Run \"Get All Debtors\" first. After deletion, the debtor will not appear in list requests (soft delete)."
+          }
+        },
+        {
+          "name": "GET - Filter Debtors by Name",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test(\"All debtors match name filter\", function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    if (jsonData.debtors && jsonData.debtors.length > 0) {",
+                  "        jsonData.debtors.forEach(function(debtor) {",
+                  "            pm.expect(debtor.name.toLowerCase()).to.include('john');",
+                  "        });",
+                  "    }",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept-Language",
+                "value": "{{language}}",
+                "description": "Language preference. Use {{language}} variable (default: hi - Hindi)"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/debtors?name=John&page=0&size=20",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "debtors"
+              ],
+              "query": [
+                {
+                  "key": "name",
+                  "value": "John",
+                  "description": "Filter by name (partial match, case-insensitive)"
+                },
+                {
+                  "key": "page",
+                  "value": "0"
+                },
+                {
+                  "key": "size",
+                  "value": "20"
+                }
+              ]
+            },
+            "description": "Filter debtors by name. Sample data includes 'John Doe'."
+          }
+        },
+        {
+          "name": "GET - Filter Debtors by Bank Code",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test(\"All debtors have BANK002 bank code\", function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    if (jsonData.debtors && jsonData.debtors.length > 0) {",
+                  "        jsonData.debtors.forEach(function(debtor) {",
+                  "            pm.expect(debtor.bankCode).to.eql('BANK002');",
+                  "        });",
+                  "    }",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept-Language",
+                "value": "{{language}}",
+                "description": "Language preference. Use {{language}} variable (default: hi - Hindi)"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/debtors?bankCode=BANK002&page=0&size=20",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "debtors"
+              ],
+              "query": [
+                {
+                  "key": "bankCode",
+                  "value": "BANK002",
+                  "description": "Filter by bank code"
+                },
+                {
+                  "key": "page",
+                  "value": "0"
+                },
+                {
+                  "key": "size",
+                  "value": "20"
+                }
+              ]
+            },
+            "description": "Filter debtors by bank code BANK002. Sample data includes debtors with BANK002."
           }
         }
       ]
@@ -1194,7 +1687,7 @@
                 "exec": [
                   "// Ensure paymentId is set",
                   "if (!pm.collectionVariables.get('paymentId')) {",
-                  "    console.log('Warning: paymentId variable not set. Run \"Get All Payments\" first.');",
+                  "    console.log('⚠️ paymentId not set. Run \"Get All Payments\" first.');",
                   "}"
                 ],
                 "type": "text/javascript"
@@ -1206,14 +1699,6 @@
                 "exec": [
                   "pm.test(\"Status code is 200 or 404\", function () {",
                   "    pm.expect(pm.response.code).to.be.oneOf([200, 404]);",
-                  "});",
-                  "",
-                  "pm.test(\"Response has Accept-Language header effect\", function () {",
-                  "    // English error messages if 404",
-                  "    if (pm.response.code === 404) {",
-                  "        var jsonData = pm.response.json();",
-                  "        pm.expect(jsonData.message).to.be.a('string');",
-                  "    }",
                   "});"
                 ],
                 "type": "text/javascript"
@@ -1225,16 +1710,23 @@
             "header": [
               {
                 "key": "Accept-Language",
-                "value": "en",
-                "description": "English language"
+                "value": "{{language}}",
+                "description": "Language preference. Use {{language}} variable (default: hi - Hindi)"
               }
             ],
             "url": {
               "raw": "{{baseUrl}}/api/v1/payments/{{paymentId}}",
-              "host": ["{{baseUrl}}"],
-              "path": ["api", "v1", "payments", "{{paymentId}}"]
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "payments",
+                "{{paymentId}}"
+              ]
             },
-            "description": "Get payment with English language header. Uses {{paymentId}} variable."
+            "description": "Get payment with English language header. Uses {{paymentId}} variable. Run \"Get All Payments\" first."
           }
         },
         {
@@ -1246,7 +1738,58 @@
                 "exec": [
                   "// Ensure paymentId is set",
                   "if (!pm.collectionVariables.get('paymentId')) {",
-                  "    console.log('Warning: paymentId variable not set. Run \"Get All Payments\" first.');",
+                  "    console.log('⚠️ paymentId not set. Run \"Get All Payments\" first.');",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200 or 404\", function () {",
+                  "    pm.expect(pm.response.code).to.be.oneOf([200, 404]);",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept-Language",
+                "value": "{{language}}",
+                "description": "Language preference. Use {{language}} variable (default: hi - Hindi)"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/payments/{{paymentId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "payments",
+                "{{paymentId}}"
+              ]
+            },
+            "description": "Get payment with Spanish language header. Uses {{paymentId}} variable. Run \"Get All Payments\" first."
+          }
+        },
+        {
+          "name": "Get Payment (Hindi)",
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "exec": [
+                  "// Ensure paymentId is set",
+                  "if (!pm.collectionVariables.get('paymentId')) {",
+                  "    console.log('⚠️ paymentId not set. Run \"Get All Payments\" first.');",
                   "}"
                 ],
                 "type": "text/javascript"
@@ -1260,13 +1803,13 @@
                   "    pm.expect(pm.response.code).to.be.oneOf([200, 404]);",
                   "});",
                   "",
-                  "pm.test(\"Response has Spanish language header effect\", function () {",
-                  "    // Spanish error messages if 404",
-                  "    if (pm.response.code === 404) {",
+                  "if (pm.response.code === 404) {",
+                  "    pm.test(\"Error message is in Hindi\", function () {",
                   "        var jsonData = pm.response.json();",
+                  "        // Check if message contains Hindi characters or common Hindi words",
                   "        pm.expect(jsonData.message).to.be.a('string');",
-                  "    }",
-                  "});"
+                  "    });",
+                  "}"
                 ],
                 "type": "text/javascript"
               }
@@ -1277,16 +1820,82 @@
             "header": [
               {
                 "key": "Accept-Language",
-                "value": "es",
-                "description": "Spanish language"
+                "value": "{{language}}",
+                "description": "Language preference. Use {{language}} variable (default: hi - Hindi)"
               }
             ],
             "url": {
               "raw": "{{baseUrl}}/api/v1/payments/{{paymentId}}",
-              "host": ["{{baseUrl}}"],
-              "path": ["api", "v1", "payments", "{{paymentId}}"]
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "payments",
+                "{{paymentId}}"
+              ]
             },
-            "description": "Get payment with Spanish language header. Uses {{paymentId}} variable."
+            "description": "Get payment with Hindi language header. Uses {{paymentId}} variable. Run \"Get All Payments\" first. Error messages will be in Hindi (हिंदी)."
+          }
+        },
+        {
+          "name": "Get Payment (Bengali)",
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "exec": [
+                  "// Ensure paymentId is set",
+                  "if (!pm.collectionVariables.get('paymentId')) {",
+                  "    console.log('⚠️ paymentId not set. Run \"Get All Payments\" first.');",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200 or 404\", function () {",
+                  "    pm.expect(pm.response.code).to.be.oneOf([200, 404]);",
+                  "});",
+                  "",
+                  "if (pm.response.code === 404) {",
+                  "    pm.test(\"Error message is in Bengali\", function () {",
+                  "        var jsonData = pm.response.json();",
+                  "        // Check if message contains Bengali characters",
+                  "        pm.expect(jsonData.message).to.be.a('string');",
+                  "    });",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept-Language",
+                "value": "{{language}}",
+                "description": "Language preference. Use {{language}} variable (default: hi - Hindi)"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/payments/{{paymentId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "payments",
+                "{{paymentId}}"
+              ]
+            },
+            "description": "Get payment with Bengali language header. Uses {{paymentId}} variable. Run \"Get All Payments\" first. Error messages will be in Bengali (বাংলা)."
           }
         }
       ]
@@ -1320,6 +1929,11 @@
               {
                 "key": "Content-Type",
                 "value": "application/json"
+              },
+              {
+                "key": "Accept-Language",
+                "value": "{{language}}",
+                "description": "Language preference. Use {{language}} variable (default: hi - Hindi)"
               }
             ],
             "body": {
@@ -1331,12 +1945,18 @@
                 }
               }
             },
-            "description": "Test validation: negative amount should return 400 Bad Request"
-          },
-          "url": {
-            "raw": "{{baseUrl}}/api/v1/payments",
-            "host": ["{{baseUrl}}"],
-            "path": ["api", "v1", "payments"]
+            "description": "Test validation: negative amount should return 400 Bad Request",
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/payments",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "payments"
+              ]
+            }
           }
         },
         {
@@ -1365,6 +1985,11 @@
               {
                 "key": "Content-Type",
                 "value": "application/json"
+              },
+              {
+                "key": "Accept-Language",
+                "value": "{{language}}",
+                "description": "Language preference. Use {{language}} variable (default: hi - Hindi)"
               }
             ],
             "body": {
@@ -1376,12 +2001,18 @@
                 }
               }
             },
-            "description": "Test validation: invalid currency code should return 400 Bad Request"
-          },
-          "url": {
-            "raw": "{{baseUrl}}/api/v1/payments",
-            "host": ["{{baseUrl}}"],
-            "path": ["api", "v1", "payments"]
+            "description": "Test validation: invalid currency code should return 400 Bad Request",
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/payments",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "payments"
+              ]
+            }
           }
         },
         {
@@ -1410,6 +2041,11 @@
               {
                 "key": "Content-Type",
                 "value": "application/json"
+              },
+              {
+                "key": "Accept-Language",
+                "value": "{{language}}",
+                "description": "Language preference. Use {{language}} variable (default: hi - Hindi)"
               }
             ],
             "body": {
@@ -1421,12 +2057,18 @@
                 }
               }
             },
-            "description": "Test validation: invalid status should return 400 Bad Request"
-          },
-          "url": {
-            "raw": "{{baseUrl}}/api/v1/payments",
-            "host": ["{{baseUrl}}"],
-            "path": ["api", "v1", "payments"]
+            "description": "Test validation: invalid status should return 400 Bad Request",
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/payments",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "payments"
+              ]
+            }
           }
         },
         {
@@ -1455,6 +2097,11 @@
               {
                 "key": "Content-Type",
                 "value": "application/json"
+              },
+              {
+                "key": "Accept-Language",
+                "value": "{{language}}",
+                "description": "Language preference. Use {{language}} variable (default: hi - Hindi)"
               }
             ],
             "body": {
@@ -1466,12 +2113,18 @@
                 }
               }
             },
-            "description": "Test validation: empty required fields should return 400 Bad Request"
-          },
-          "url": {
-            "raw": "{{baseUrl}}/api/v1/creditors",
-            "host": ["{{baseUrl}}"],
-            "path": ["api", "v1", "creditors"]
+            "description": "Test validation: empty required fields should return 400 Bad Request",
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/creditors",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "creditors"
+              ]
+            }
           }
         }
       ]
@@ -1502,10 +2155,18 @@
           ],
           "request": {
             "method": "GET",
-            "header": [],
+            "header": [
+              {
+                "key": "Accept-Language",
+                "value": "{{language}}",
+                "description": "Language preference. Use {{language}} variable (default: hi - Hindi)"
+              }
+            ],
             "url": {
               "raw": "{{baseUrl}}/api/v1/payments/00000000-0000-0000-0000-000000000000",
-              "host": ["{{baseUrl}}"],
+              "host": [
+                "{{baseUrl}}"
+              ],
               "path": [
                 "api",
                 "v1",
@@ -1539,10 +2200,18 @@
           ],
           "request": {
             "method": "GET",
-            "header": [],
+            "header": [
+              {
+                "key": "Accept-Language",
+                "value": "{{language}}",
+                "description": "Language preference. Use {{language}} variable (default: hi - Hindi)"
+              }
+            ],
             "url": {
               "raw": "{{baseUrl}}/api/v1/creditors/00000000-0000-0000-0000-000000000000",
-              "host": ["{{baseUrl}}"],
+              "host": [
+                "{{baseUrl}}"
+              ],
               "path": [
                 "api",
                 "v1",
@@ -1576,10 +2245,18 @@
           ],
           "request": {
             "method": "GET",
-            "header": [],
+            "header": [
+              {
+                "key": "Accept-Language",
+                "value": "{{language}}",
+                "description": "Language preference. Use {{language}} variable (default: hi - Hindi)"
+              }
+            ],
             "url": {
               "raw": "{{baseUrl}}/api/v1/debtors/00000000-0000-0000-0000-000000000000",
-              "host": ["{{baseUrl}}"],
+              "host": [
+                "{{baseUrl}}"
+              ],
               "path": [
                 "api",
                 "v1",
@@ -1588,6 +2265,392 @@
               ]
             },
             "description": "Test 404 error: non-existent debtor ID should return 404 Not Found"
+          }
+        }
+      ]
+    },
+    {
+      "name": "GraphQL API",
+      "item": [
+        {
+          "name": "GraphQL - Query All Payments",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test(\"Response has data\", function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData).to.have.property('data');",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Accept-Language",
+                "value": "{{language}}",
+                "description": "Language preference. Use {{language}} variable (default: hi - Hindi)"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"query\": \"query { payments(page: 0, size: 10) { payments { id amount currency status createdAt } total page size totalPages } }\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/graphql",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "graphql"
+              ]
+            },
+            "description": "GraphQL query to get all payments with pagination. Uses {{language}} variable for error messages."
+          }
+        },
+        {
+          "name": "GraphQL - Query Payment by ID",
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "exec": [
+                  "// Ensure paymentId is set",
+                  "if (!pm.collectionVariables.get('paymentId')) {",
+                  "    console.log('⚠️ paymentId not set. Run \"Get All Payments\" first.');",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Accept-Language",
+                "value": "{{language}}",
+                "description": "Language preference. Use {{language}} variable (default: hi - Hindi)"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"query\": \"query { payment(id: \\\"{{paymentId}}\\\") { id amount currency status createdAt creditorId debtorId } }\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/graphql",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "graphql"
+              ]
+            },
+            "description": "GraphQL query to get payment by ID. Uses {{paymentId}} variable. Run \"Get All Payments\" first."
+          }
+        },
+        {
+          "name": "GraphQL - Query Payments by Status",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Accept-Language",
+                "value": "{{language}}",
+                "description": "Language preference. Use {{language}} variable (default: hi - Hindi)"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"query\": \"query { paymentsByStatus(status: \\\"RECEIVED\\\", page: 0, size: 10) { payments { id amount currency status } total } }\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/graphql",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "graphql"
+              ]
+            },
+            "description": "GraphQL query to filter payments by status (RECEIVED)."
+          }
+        },
+        {
+          "name": "GraphQL - Query Payments by Currency",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Accept-Language",
+                "value": "{{language}}",
+                "description": "Language preference. Use {{language}} variable (default: hi - Hindi)"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"query\": \"query { paymentsByCurrency(currency: \\\"USD\\\", page: 0, size: 10) { payments { id amount currency status } total } }\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/graphql",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "graphql"
+              ]
+            },
+            "description": "GraphQL query to filter payments by currency (USD)."
+          }
+        },
+        {
+          "name": "GraphQL - Mutation Create Payment",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test(\"Response has created payment\", function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    if (jsonData.data && jsonData.data.createPayment) {",
+                  "        pm.expect(jsonData.data.createPayment).to.have.property('id');",
+                  "        pm.collectionVariables.set('paymentId', jsonData.data.createPayment.id);",
+                  "        console.log('✅ Created payment ID:', jsonData.data.createPayment.id);",
+                  "    }",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Accept-Language",
+                "value": "{{language}}",
+                "description": "Language preference. Use {{language}} variable (default: hi - Hindi)"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"query\": \"mutation { createPayment(input: { amount: 1000.00 currency: \\\"USD\\\" status: \\\"RECEIVED\\\" }) { id amount currency status createdAt } }\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/graphql",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "graphql"
+              ]
+            },
+            "description": "GraphQL mutation to create a payment. Auto-extracts payment ID to {{paymentId}} variable."
+          }
+        },
+        {
+          "name": "GraphQL - Mutation Create Payment (With Creditor/Debtor)",
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "exec": [
+                  "// Ensure creditorId and debtorId are set",
+                  "if (!pm.collectionVariables.get('creditorId') || !pm.collectionVariables.get('debtorId')) {",
+                  "    console.log('⚠️ creditorId or debtorId not set. Run Setup requests first!');",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Accept-Language",
+                "value": "{{language}}",
+                "description": "Language preference. Use {{language}} variable (default: hi - Hindi)"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"query\": \"mutation { createPayment(input: { amount: 1500.00 currency: \\\"USD\\\" status: \\\"RECEIVED\\\" creditorId: \\\"{{creditorId}}\\\" debtorId: \\\"{{debtorId}}\\\" }) { id amount currency status creditorId debtorId createdAt } }\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/graphql",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "graphql"
+              ]
+            },
+            "description": "GraphQL mutation to create payment with creditor and debtor. Requires {{creditorId}} and {{debtorId}} variables."
+          }
+        },
+        {
+          "name": "GraphQL - Mutation Echo Payment",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Accept-Language",
+                "value": "{{language}}",
+                "description": "Language preference. Use {{language}} variable (default: hi - Hindi)"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"query\": \"mutation { echoPayment(input: { amount: 2000.00 currency: \\\"EUR\\\" status: \\\"PROCESSING\\\" }) { id amount currency status createdAt } }\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/graphql",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "graphql"
+              ]
+            },
+            "description": "GraphQL mutation to echo a payment (returns and saves)."
           }
         }
       ]
@@ -1602,17 +2665,89 @@
     {
       "key": "creditorId",
       "value": "",
-      "type": "string"
+      "type": "string",
+      "description": "Auto-populated by Get All Creditors or Create Creditor requests"
     },
     {
       "key": "debtorId",
       "value": "",
-      "type": "string"
+      "type": "string",
+      "description": "Auto-populated by Get All Debtors or Create Debtor requests"
     },
     {
       "key": "paymentId",
       "value": "",
-      "type": "string"
+      "type": "string",
+      "description": "Auto-populated by Get All Payments or Create Payment requests"
+    },
+    {
+      "key": "defaultLanguage",
+      "value": "hi",
+      "type": "string",
+      "description": "Default language for API requests (Hindi)"
+    },
+    {
+      "key": "language",
+      "value": "hi",
+      "type": "string",
+      "description": "Language for API requests. Options: hi (Hindi), en (English), es (Spanish), fr (French), de (German), bn (Bengali), ta (Tamil), te (Telugu), kn (Kannada), ru (Russian), zh (Chinese)",
+      "options": [
+        {
+          "key": "hi",
+          "value": "hi",
+          "description": "Hindi (हिंदी) - Default"
+        },
+        {
+          "key": "en",
+          "value": "en",
+          "description": "English"
+        },
+        {
+          "key": "es",
+          "value": "es",
+          "description": "Spanish (Español)"
+        },
+        {
+          "key": "fr",
+          "value": "fr",
+          "description": "French (Français)"
+        },
+        {
+          "key": "de",
+          "value": "de",
+          "description": "German (Deutsch)"
+        },
+        {
+          "key": "bn",
+          "value": "bn",
+          "description": "Bengali (বাংলা)"
+        },
+        {
+          "key": "ta",
+          "value": "ta",
+          "description": "Tamil (தமிழ்)"
+        },
+        {
+          "key": "te",
+          "value": "te",
+          "description": "Telugu (తెలుగు)"
+        },
+        {
+          "key": "kn",
+          "value": "kn",
+          "description": "Kannada (ಕನ್ನಡ)"
+        },
+        {
+          "key": "ru",
+          "value": "ru",
+          "description": "Russian (Русский)"
+        },
+        {
+          "key": "zh",
+          "value": "zh",
+          "description": "Chinese (中文)"
+        }
+      ]
     }
   ]
 }

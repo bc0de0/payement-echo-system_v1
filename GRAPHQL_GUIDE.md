@@ -1,25 +1,28 @@
-# GraphQL API Guide
+# GraphQL API Guide - Payment Echo System
 
 ## Overview
 
-The Payment Echo System provides a complete GraphQL API alongside the REST API, allowing clients to query exactly the data they need.
+The Payment Echo System provides a GraphQL API alongside the REST API, allowing flexible querying and mutations for payments, creditors, and debtors.
 
-## Access Points
+## GraphQL Endpoint
 
-- **GraphQL Endpoint**: `POST http://localhost:8080/graphql`
-- **GraphiQL Playground**: `GET http://localhost:8080/graphiql`
+- **GraphQL Endpoint**: `http://localhost:8080/graphql`
+- **GraphiQL UI**: `http://localhost:8080/graphiql` (Interactive query explorer)
 
-## GraphQL Schema
+## Getting Started
 
-The GraphQL schema is defined in `src/main/resources/graphql/payment.graphqls` and includes:
+### 1. Access GraphiQL UI
 
-- **Types**: Payment, Creditor, Debtor, PaymentPage, CreditorPage, DebtorPage
-- **Queries**: All read operations
-- **Mutations**: All write operations
+Open your browser and navigate to:
+```
+http://localhost:8080/graphiql
+```
 
-## Queries
+This provides an interactive interface to explore and test GraphQL queries and mutations.
 
-### Get All Payments
+### 2. Basic Query Examples
+
+#### Get All Payments
 
 ```graphql
 query {
@@ -30,6 +33,8 @@ query {
       currency
       status
       createdAt
+      creditorId
+      debtorId
     }
     total
     page
@@ -39,21 +44,28 @@ query {
 }
 ```
 
-### Get Payment by ID
+#### Get Payment by ID
 
 ```graphql
 query {
-  payment(id: "123e4567-e89b-12d3-a456-426614174000") {
+  payment(id: "e9c5b9de-45c0-407c-a376-52c92721ce79") {
     id
     amount
     currency
     status
     createdAt
+    creditorId
+    debtorId
   }
 }
 ```
 
-### Filter Payments by Status
+**Note**: Replace the ID with an actual payment ID from your database. Get IDs using:
+```bash
+curl http://localhost:8080/api/v1/payments | jq '.payments[0].id'
+```
+
+#### Filter Payments by Status
 
 ```graphql
 query {
@@ -69,7 +81,7 @@ query {
 }
 ```
 
-### Filter Payments by Currency
+#### Filter Payments by Currency
 
 ```graphql
 query {
@@ -85,16 +97,11 @@ query {
 }
 ```
 
-### Filter Payments by Amount Range
+#### Filter Payments by Amount Range
 
 ```graphql
 query {
-  paymentsByAmountRange(
-    minAmount: 100.0
-    maxAmount: 1000.0
-    page: 0
-    size: 20
-  ) {
+  paymentsByAmountRange(minAmount: 100.0, maxAmount: 2000.0, page: 0, size: 20) {
     payments {
       id
       amount
@@ -106,64 +113,14 @@ query {
 }
 ```
 
-### Get All Creditors
+### 3. Mutation Examples
 
-```graphql
-query {
-  creditors(page: 0, size: 20) {
-    creditors {
-      id
-      name
-      accountNumber
-      bankCode
-      email
-    }
-    total
-  }
-}
-```
-
-### Filter Creditors by Name
-
-```graphql
-query {
-  creditorsByName(name: "John", page: 0, size: 20) {
-    creditors {
-      id
-      name
-      accountNumber
-      bankCode
-    }
-    total
-  }
-}
-```
-
-### Get All Debtors
-
-```graphql
-query {
-  debtors(page: 0, size: 20) {
-    debtors {
-      id
-      name
-      accountNumber
-      bankCode
-      email
-    }
-    total
-  }
-}
-```
-
-## Mutations
-
-### Create Payment
+#### Create Payment (Standalone)
 
 ```graphql
 mutation {
   createPayment(input: {
-    amount: 100.50
+    amount: 1000.00
     currency: "USD"
     status: "RECEIVED"
   }) {
@@ -176,16 +133,16 @@ mutation {
 }
 ```
 
-### Create Payment with Creditor and Debtor
+#### Create Payment (With Creditor and Debtor)
 
 ```graphql
 mutation {
   createPayment(input: {
-    amount: 200.75
-    currency: "EUR"
-    status: "PROCESSING"
-    creditorId: "123e4567-e89b-12d3-a456-426614174000"
-    debtorId: "223e4567-e89b-12d3-a456-426614174000"
+    amount: 1500.00
+    currency: "USD"
+    status: "RECEIVED"
+    creditorId: "d4c10bbc-5f9d-400a-b527-904dfa02452a"
+    debtorId: "02d8b939-b2a9-445c-9fcf-e94ad8a77b15"
   }) {
     id
     amount
@@ -193,92 +150,39 @@ mutation {
     status
     creditorId
     debtorId
+    createdAt
   }
 }
 ```
 
-### Echo Payment
+**Note**: Replace `creditorId` and `debtorId` with actual IDs from your database:
+```bash
+# Get Creditor ID
+curl http://localhost:8080/api/v1/creditors | jq '.creditors[0].id'
+
+# Get Debtor ID
+curl http://localhost:8080/api/v1/debtors | jq '.debtors[0].id'
+```
+
+#### Echo Payment
 
 ```graphql
 mutation {
   echoPayment(input: {
-    amount: 150.0
-    currency: "GBP"
-    status: "COMPLETED"
+    amount: 2000.00
+    currency: "EUR"
+    status: "PROCESSING"
   }) {
     id
     amount
     currency
     status
+    createdAt
   }
 }
 ```
 
-### Create Creditor
-
-```graphql
-mutation {
-  createCreditor(input: {
-    name: "John Doe"
-    accountNumber: "1234567890"
-    bankCode: "BANK001"
-    email: "john@example.com"
-    address: "123 Main St"
-  }) {
-    id
-    name
-    accountNumber
-    bankCode
-    email
-  }
-}
-```
-
-### Delete Creditor (Soft Delete)
-
-```graphql
-mutation {
-  deleteCreditor(id: "123e4567-e89b-12d3-a456-426614174000")
-}
-```
-
-### Create Debtor
-
-```graphql
-mutation {
-  createDebtor(input: {
-    name: "Jane Smith"
-    accountNumber: "0987654321"
-    bankCode: "BANK002"
-    email: "jane@example.com"
-  }) {
-    id
-    name
-    accountNumber
-    bankCode
-  }
-}
-```
-
-### Delete Debtor (Soft Delete)
-
-```graphql
-mutation {
-  deleteDebtor(id: "223e4567-e89b-12d3-a456-426614174000")
-}
-```
-
-## Using GraphiQL
-
-1. Start the application: `./gradlew bootRun`
-2. Navigate to: `http://localhost:8080/graphiql`
-3. Use the interactive playground to:
-   - Explore the schema
-   - Write and test queries
-   - View query documentation
-   - See query execution results
-
-## Using curl
+## Using cURL
 
 ### Query Example
 
@@ -286,7 +190,7 @@ mutation {
 curl -X POST http://localhost:8080/graphql \
   -H "Content-Type: application/json" \
   -d '{
-    "query": "query { payments { payments { id amount currency status } total } }"
+    "query": "query { payments(page: 0, size: 10) { payments { id amount currency status } total } }"
   }'
 ```
 
@@ -296,71 +200,227 @@ curl -X POST http://localhost:8080/graphql \
 curl -X POST http://localhost:8080/graphql \
   -H "Content-Type: application/json" \
   -d '{
-    "query": "mutation { createPayment(input: { amount: 100.0 currency: \"USD\" status: \"RECEIVED\" }) { id amount currency status } }"
+    "query": "mutation { createPayment(input: { amount: 1000.00 currency: \"USD\" status: \"RECEIVED\" }) { id amount currency status } }"
   }'
 ```
 
-## Benefits of GraphQL
+## Using Postman
 
-1. **Flexible Queries**: Request only the fields you need
-2. **Single Endpoint**: One endpoint for all operations
-3. **Type Safety**: Strongly typed schema
-4. **Introspection**: Self-documenting API
-5. **Reduced Over-fetching**: Get exactly what you need
-6. **Efficient**: Combine multiple queries in one request
+1. **Create a new POST request**
+   - URL: `http://localhost:8080/graphql`
+   - Method: `POST`
+   - Headers:
+     - `Content-Type: application/json`
 
-## Comparison with REST API
-
-| Feature | REST API | GraphQL |
-|---------|----------|---------|
-| Endpoints | Multiple endpoints | Single endpoint |
-| Data Fetching | Fixed response structure | Flexible field selection |
-| Over-fetching | Possible | Avoided |
-| Under-fetching | Possible | Avoided |
-| Caching | HTTP caching | More complex |
-| Versioning | URL-based | Schema-based |
-
-## Best Practices
-
-1. **Use GraphQL for**:
-   - Complex queries with multiple related entities
-   - Mobile applications needing flexible data fetching
-   - Applications requiring real-time updates
-   - When you need to reduce over-fetching
-
-2. **Use REST API for**:
-   - Simple CRUD operations
-   - When HTTP caching is important
-   - File uploads/downloads
-   - When you need standard HTTP status codes
-
-## Error Handling
-
-GraphQL errors are returned in the `errors` field of the response:
-
+2. **Body (raw JSON)**:
 ```json
 {
-  "data": null,
-  "errors": [
-    {
-      "message": "Payment not found with id: 123",
-      "locations": [{"line": 2, "column": 3}],
-      "path": ["payment"]
-    }
-  ]
+  "query": "query { payments(page: 0, size: 10) { payments { id amount currency status } total } }"
 }
 ```
 
-## Testing
-
-GraphQL endpoints are tested in `GraphQLIntegrationTest.kt`:
-
-- Query tests (payments, creditors, debtors)
-- Filter tests (status, currency, amount range)
-- Mutation tests (create, delete)
-- Error handling tests
-
-Run tests:
-```bash
-./gradlew test --tests "*GraphQL*"
+3. **For Mutations**:
+```json
+{
+  "query": "mutation { createPayment(input: { amount: 1000.00 currency: \"USD\" status: \"RECEIVED\" }) { id amount currency status createdAt } }"
+}
 ```
+
+## GraphQL Schema
+
+### Types
+
+#### Payment
+```graphql
+type Payment {
+  id: String!
+  amount: Float!
+  currency: String!
+  status: String!
+  createdAt: String!
+  creditorId: String
+  debtorId: String
+}
+```
+
+#### PaymentPage
+```graphql
+type PaymentPage {
+  payments: [Payment!]!
+  total: Int!
+  page: Int!
+  size: Int!
+  totalPages: Int!
+}
+```
+
+#### PaymentInput
+```graphql
+input PaymentInput {
+  amount: Float!
+  currency: String!
+  status: String!
+  creditorId: String
+  debtorId: String
+}
+```
+
+#### PaymentEchoInput
+```graphql
+input PaymentEchoInput {
+  amount: Float!
+  currency: String!
+  status: String!
+  creditorId: String
+  debtorId: String
+}
+```
+
+### Queries
+
+- `payments(page: Int, size: Int, sort: String): PaymentPage` - Get all payments with pagination
+- `payment(id: String!): PaymentResponse` - Get payment by ID
+- `paymentsByStatus(status: String!, page: Int, size: Int): PaymentPage` - Filter by status
+- `paymentsByCurrency(currency: String!, page: Int, size: Int): PaymentPage` - Filter by currency
+- `paymentsByAmountRange(minAmount: Float!, maxAmount: Float!, page: Int, size: Int): PaymentPage` - Filter by amount range
+
+### Mutations
+
+- `createPayment(input: PaymentInput!): PaymentResponse` - Create a new payment
+- `echoPayment(input: PaymentEchoInput!): PaymentResponse` - Echo a payment (returns and saves)
+
+## Status Values
+
+- `RECEIVED` - Payment has been received
+- `PROCESSING` - Payment is being processed
+- `COMPLETED` - Payment has been completed
+- `FAILED` - Payment has failed
+
+## Currency Codes
+
+Use valid 3-letter ISO currency codes:
+- `USD` - US Dollar
+- `EUR` - Euro
+- `GBP` - British Pound
+- `JPY` - Japanese Yen
+- `CAD` - Canadian Dollar
+- `AUD` - Australian Dollar
+
+## Pagination
+
+All list queries support pagination:
+- `page`: Page number (0-indexed, default: 0)
+- `size`: Page size (default: 20)
+
+Example:
+```graphql
+query {
+  payments(page: 0, size: 10) {
+    payments { id amount }
+    total
+    page
+    size
+    totalPages
+  }
+}
+```
+
+## Error Handling
+
+GraphQL errors are returned in the standard GraphQL error format:
+
+```json
+{
+  "errors": [
+    {
+      "message": "Payment not found with id: ...",
+      "extensions": {
+        "status": 404
+      }
+    }
+  ],
+  "data": null
+}
+```
+
+## Best Practices
+
+1. **Always specify fields you need** - GraphQL allows you to request only the fields you need, reducing payload size
+2. **Use pagination** - For large datasets, always use pagination parameters
+3. **Handle errors** - Check for `errors` array in responses
+4. **Use variables** - For complex queries, use GraphQL variables instead of string interpolation
+
+### Using Variables
+
+```graphql
+query GetPayments($page: Int, $size: Int) {
+  payments(page: $page, size: $size) {
+    payments { id amount currency }
+    total
+  }
+}
+```
+
+Variables:
+```json
+{
+  "page": 0,
+  "size": 20
+}
+```
+
+## Testing with Sample Data
+
+The application includes sample data that you can query:
+
+1. **Get sample payment IDs**:
+```bash
+curl http://localhost:8080/api/v1/payments | jq '.payments[0:3] | .[] | .id'
+```
+
+2. **Use in GraphQL query**:
+```graphql
+query {
+  payment(id: "<PASTE-ID-HERE>") {
+    id
+    amount
+    currency
+    status
+  }
+}
+```
+
+## Comparison: REST vs GraphQL
+
+| Feature | REST API | GraphQL API |
+|---------|----------|-------------|
+| Endpoint | `/api/v1/payments` | `/graphql` |
+| Query Flexibility | Fixed endpoints | Flexible queries |
+| Over-fetching | Possible | Avoided (request only needed fields) |
+| Multiple Resources | Multiple requests | Single request |
+| Caching | HTTP caching | Custom caching needed |
+| Learning Curve | Lower | Higher |
+
+## Troubleshooting
+
+### Common Issues
+
+1. **"Payment not found"**
+   - Ensure you're using a valid UUID from the database
+   - Check that the payment exists using REST API first
+
+2. **"Invalid currency"**
+   - Use valid 3-letter ISO currency codes (USD, EUR, GBP, etc.)
+
+3. **"Invalid status"**
+   - Use one of: RECEIVED, PROCESSING, COMPLETED, FAILED
+
+4. **GraphiQL not loading**
+   - Ensure `spring.graphql.graphiql.enabled=true` in `application.properties`
+   - Check that the application is running on port 8080
+
+## Additional Resources
+
+- [GraphQL Official Documentation](https://graphql.org/learn/)
+- [Spring GraphQL Documentation](https://docs.spring.io/spring-graphql/docs/current/reference/html/)
+- REST API Documentation: `http://localhost:8080/swagger-ui.html`

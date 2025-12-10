@@ -15,6 +15,7 @@ import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
 import java.util.*
+import java.util.Locale
 
 @RestController
 @RequestMapping("/api/v1/creditors")
@@ -22,7 +23,10 @@ import java.util.*
 class CreditorController(private val service: CreditorService) {
 
     @GetMapping
-    @Operation(summary = "Get all creditors", description = "Retrieve a paginated list of all creditors")
+    @Operation(
+        summary = "Get all creditors",
+        description = "Retrieve a paginated list of all creditors. Supports Accept-Language header for i18n (default: en)."
+    )
     @ApiResponses(
         value = [
             ApiResponse(responseCode = "200", description = "Successfully retrieved creditors")
@@ -42,14 +46,20 @@ class CreditorController(private val service: CreditorService) {
         @RequestParam(required = false) name: String?,
         
         @Parameter(description = "Filter by bank code", example = "BANK001")
-        @RequestParam(required = false) bankCode: String?
+        @RequestParam(required = false) bankCode: String?,
+        
+        @Parameter(description = "Language preference (en, es, fr, de, hi, bn, ta, te, kn, ru, zh). Default: hi", example = "hi")
+        @RequestHeader(name = "Accept-Language", required = false, defaultValue = "hi") acceptLanguage: String
     ): ResponseEntity<CreditorListResponse> {
         val creditors = service.findAll(page, size, sort, name, bankCode)
         return ResponseEntity.ok(CreditorListResponse(creditors = creditors.content, total = creditors.totalElements.toInt()))
     }
 
     @GetMapping("/{id}")
-    @Operation(summary = "Get creditor by ID", description = "Retrieve a specific creditor by its UUID")
+    @Operation(
+        summary = "Get creditor by ID",
+        description = "Retrieve a specific creditor by its UUID. Supports Accept-Language header for i18n (default: en)."
+    )
     @ApiResponses(
         value = [
             ApiResponse(responseCode = "200", description = "Creditor found"),
@@ -58,7 +68,10 @@ class CreditorController(private val service: CreditorService) {
     )
     fun getById(
         @Parameter(description = "Creditor UUID", required = true)
-        @PathVariable id: UUID
+        @PathVariable id: UUID,
+        
+        @Parameter(description = "Language preference (en, es, fr, de, hi, bn, ta, te, kn, ru, zh). Default: hi", example = "hi")
+        @RequestHeader(name = "Accept-Language", required = false, defaultValue = "hi") acceptLanguage: String
     ): ResponseEntity<CreditorResponse> {
         return ResponseEntity.ok(service.findById(id))
     }
@@ -68,7 +81,8 @@ class CreditorController(private val service: CreditorService) {
         summary = "Create a new creditor",
         description = "Create a new creditor with the provided details. Sample data examples:\n" +
                 "- Acme Corporation: name=\"Acme Corporation\", accountNumber=\"ACC001234567\", bankCode=\"BANK001\"\n" +
-                "- Tech Solutions Inc: name=\"Tech Solutions Inc\", accountNumber=\"ACC002345678\", bankCode=\"BANK002\""
+                "- Tech Solutions Inc: name=\"Tech Solutions Inc\", accountNumber=\"ACC002345678\", bankCode=\"BANK002\"\n\n" +
+                "Supports Accept-Language header for i18n (default: en)."
     )
     @ApiResponses(
         value = [
@@ -104,14 +118,20 @@ class CreditorController(private val service: CreditorService) {
                 ]
             )]
         )
-        @RequestBody request: CreditorCreateRequest
+        @RequestBody request: CreditorCreateRequest,
+        
+        @Parameter(description = "Language preference (en, es, fr, de, hi, bn, ta, te, kn, ru, zh). Default: hi", example = "hi")
+        @RequestHeader(name = "Accept-Language", required = false, defaultValue = "hi") acceptLanguage: String
     ): ResponseEntity<CreditorResponse> {
         val created = service.create(request)
         return ResponseEntity.status(HttpStatus.CREATED).body(created)
     }
 
     @DeleteMapping("/{id}")
-    @Operation(summary = "Delete a creditor", description = "Delete a creditor by its UUID")
+    @Operation(
+        summary = "Delete a creditor",
+        description = "Delete a creditor by its UUID (soft delete). Supports Accept-Language header for i18n (default: en)."
+    )
     @ApiResponses(
         value = [
             ApiResponse(responseCode = "204", description = "Creditor deleted successfully"),
@@ -120,7 +140,10 @@ class CreditorController(private val service: CreditorService) {
     )
     fun delete(
         @Parameter(description = "Creditor UUID", required = true)
-        @PathVariable id: UUID
+        @PathVariable id: UUID,
+        
+        @Parameter(description = "Language preference (en, es, fr, de, hi, bn, ta, te, kn, ru, zh). Default: hi", example = "hi")
+        @RequestHeader(name = "Accept-Language", required = false, defaultValue = "hi") acceptLanguage: String
     ): ResponseEntity<Void> {
         service.delete(id)
         return ResponseEntity.noContent().build()

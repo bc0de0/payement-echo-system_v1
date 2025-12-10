@@ -10,6 +10,7 @@ import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.MethodArgumentNotValidException
 import org.springframework.web.bind.annotation.ExceptionHandler
 import org.springframework.web.bind.annotation.RestControllerAdvice
+import org.springframework.web.context.request.ServletWebRequest
 import org.springframework.web.context.request.WebRequest
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException
 import org.springframework.web.servlet.LocaleResolver
@@ -25,10 +26,20 @@ class GlobalExceptionHandler(
     private val logger = LoggerFactory.getLogger(GlobalExceptionHandler::class.java)
     
     private fun getLocale(request: WebRequest): Locale {
-        return if (request is HttpServletRequest) {
-            localeResolver.resolveLocale(request)
+        return if (request is ServletWebRequest) {
+            try {
+                localeResolver.resolveLocale(request.request)
+            } catch (e: Exception) {
+                logger.warn("Failed to resolve locale from request, using default: {}", e.message)
+                Locale.forLanguageTag("hi") // Default to Hindi
+            }
         } else {
-            Locale.getDefault()
+            // Try to get from LocaleContextHolder as fallback
+            try {
+                org.springframework.context.i18n.LocaleContextHolder.getLocale()
+            } catch (e: Exception) {
+                Locale.forLanguageTag("hi") // Default to Hindi
+            }
         }
     }
 
@@ -36,6 +47,7 @@ class GlobalExceptionHandler(
     fun handlePaymentNotFoundException(ex: PaymentNotFoundException, request: WebRequest): ResponseEntity<ErrorResponse> {
         logger.error("Payment not found: {}", ex.message)
         val locale = getLocale(request)
+        logger.debug("Resolved locale: {} for request: {}", locale, request.getDescription(false))
         val message = messageSource.getMessage(
             "payment.not.found",
             arrayOf(ex.id.toString()),
@@ -117,13 +129,42 @@ class GlobalExceptionHandler(
         val locale = getLocale(request)
         
         val fieldErrors = ex.bindingResult.fieldErrors.associate { fieldError ->
-            val message = fieldError.defaultMessage ?: (messageSource.getMessage(
-                "validation.required",
-                null,
-                "Invalid value",
-                locale
-            ) ?: "Invalid value")
-            fieldError.field to message
+            val localizedMessage = try {
+                // Try to get localized message using the code
+                val code = fieldError.code
+                val fieldName = fieldError.field
+                
+                // Try common validation message keys
+                val messageKey = when {
+                    code == "NotNull" || code == "NotBlank" -> {
+                        when {
+                            fieldName.contains("amount", ignoreCase = true) -> "payment.invalid.amount"
+                            fieldName.contains("currency", ignoreCase = true) -> "payment.invalid.currency"
+                            fieldName.contains("status", ignoreCase = true) -> "payment.invalid.status"
+                            fieldName.contains("name", ignoreCase = true) -> "creditor.name.required"
+                            fieldName.contains("account", ignoreCase = true) -> "creditor.account.required"
+                            fieldName.contains("bank", ignoreCase = true) -> "creditor.bank.code.required"
+                            else -> "validation.required"
+                        }
+                    }
+                    code == "DecimalMin" || code == "Min" -> "payment.invalid.amount"
+                    code == "Pattern" || code == "Size" -> {
+                        when {
+                            fieldName.contains("currency", ignoreCase = true) -> "payment.invalid.currency"
+                            else -> "validation.required"
+                        }
+                    }
+                    else -> fieldError.defaultMessage ?: "validation.required"
+                }
+                
+                messageSource.getMessage(messageKey, null, fieldError.defaultMessage ?: "Invalid value", locale) 
+                    ?: (fieldError.defaultMessage ?: "Invalid value")
+            } catch (e: Exception) {
+                logger.debug("Failed to localize validation message for field ${fieldError.field}: {}", e.message)
+                fieldError.defaultMessage ?: "Invalid value"
+            }
+            
+            fieldError.field to localizedMessage
         }
         
         val errorMessage = messageSource.getMessage("error.validation.failed", null, "Validation Failed", locale) ?: "Validation Failed"

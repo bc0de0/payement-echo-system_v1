@@ -174,6 +174,7 @@ The project includes **92 comprehensive tests**:
 Import the Postman collection from `postman/PaymentEchoSystem.postman_collection.json`
 
 The collection includes:
+
 - All CRUD operations
 - Filtering examples
 - Pagination examples
@@ -304,9 +305,17 @@ curl -H "Accept-Language: en" http://localhost:8080/api/v1/payments/123
 
 # Spanish
 curl -H "Accept-Language: es" http://localhost:8080/api/v1/payments/123
+
+# Hindi
+curl -H "Accept-Language: hi" http://localhost:8080/api/v1/payments/123
+
+# Bengali
+curl -H "Accept-Language: bn" http://localhost:8080/api/v1/payments/123
 ```
 
-Supported languages: English (en), Spanish (es), French (fr), German (de), Hindi (hi), Chinese (zh)
+Supported languages: English (en), Spanish (es), French (fr), German (de), Hindi (hi), Bengali (bn), Tamil (ta), Telugu (te), Kannada (kn), Russian (ru), Chinese (zh)
+
+**Default Language**: Hindi (hi) - All API endpoints default to Hindi if Accept-Language header is not provided.
 
 ## Logging
 

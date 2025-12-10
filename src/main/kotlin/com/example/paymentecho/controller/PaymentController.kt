@@ -17,6 +17,7 @@ import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
 import java.util.*
+import java.util.Locale
 
 @RestController
 @RequestMapping("/api/v1/payments")
@@ -24,7 +25,10 @@ import java.util.*
 class PaymentController(private val service: PaymentService) {
 
     @GetMapping
-    @Operation(summary = "Get all payments", description = "Retrieve a paginated list of all payments")
+    @Operation(
+        summary = "Get all payments",
+        description = "Retrieve a paginated list of all payments. Supports Accept-Language header for i18n (default: en)."
+    )
     @ApiResponses(
         value = [
             ApiResponse(responseCode = "200", description = "Successfully retrieved payments")
@@ -56,14 +60,20 @@ class PaymentController(private val service: PaymentService) {
         @RequestParam(required = false) startDate: java.time.Instant?,
         
         @Parameter(description = "End date filter (ISO format)", example = "2025-12-31T23:59:59Z")
-        @RequestParam(required = false) endDate: java.time.Instant?
+        @RequestParam(required = false) endDate: java.time.Instant?,
+        
+        @Parameter(description = "Language preference (en, es, fr, de, hi, bn, ta, te, kn, ru, zh). Default: en", example = "hi")
+        @RequestHeader(name = "Accept-Language", required = false, defaultValue = "hi") acceptLanguage: String
     ): ResponseEntity<PaymentListResponse> {
         val payments = service.findAll(page, size, sort, status, currency, minAmount, maxAmount, startDate, endDate)
         return ResponseEntity.ok(PaymentListResponse(payments = payments.content, total = payments.totalElements.toInt()))
     }
 
     @GetMapping("/{id}")
-    @Operation(summary = "Get payment by ID", description = "Retrieve a specific payment by its UUID")
+    @Operation(
+        summary = "Get payment by ID",
+        description = "Retrieve a specific payment by its UUID. Supports Accept-Language header for i18n (default: en)."
+    )
     @ApiResponses(
         value = [
             ApiResponse(responseCode = "200", description = "Payment found"),
@@ -72,7 +82,10 @@ class PaymentController(private val service: PaymentService) {
     )
     fun getById(
         @Parameter(description = "Payment UUID", required = true)
-        @PathVariable id: UUID
+        @PathVariable id: UUID,
+        
+        @Parameter(description = "Language preference (en, es, fr, de, hi, bn, ta, te, kn, ru, zh). Default: en", example = "hi")
+        @RequestHeader(name = "Accept-Language", required = false, defaultValue = "hi") acceptLanguage: String
     ): ResponseEntity<PaymentResponse> {
         return ResponseEntity.ok(service.findById(id))
     }
@@ -87,7 +100,8 @@ class PaymentController(private val service: PaymentService) {
                 "3. Use those IDs in the request\n\n" +
                 "Sample data examples:\n" +
                 "- Payment with creditor/debtor: amount=1500.00, currency=USD, status=RECEIVED\n" +
-                "- Standalone payment: amount=1000.00, currency=USD, status=RECEIVED (no creditorId/debtorId)"
+                "- Standalone payment: amount=1000.00, currency=USD, status=RECEIVED (no creditorId/debtorId)\n\n" +
+                "Supports Accept-Language header for i18n (default: en)."
     )
     @ApiResponses(
         value = [
@@ -126,7 +140,10 @@ class PaymentController(private val service: PaymentService) {
                 ]
             )]
         )
-        @RequestBody request: PaymentCreateRequest
+        @RequestBody request: PaymentCreateRequest,
+        
+        @Parameter(description = "Language preference (en, es, fr, de, hi, bn, ta, te, kn, ru, zh). Default: en", example = "hi")
+        @RequestHeader(name = "Accept-Language", required = false, defaultValue = "hi") acceptLanguage: String
     ): ResponseEntity<PaymentResponse> {
         val created = service.create(request)
         return ResponseEntity.status(HttpStatus.CREATED).body(created)
@@ -135,7 +152,7 @@ class PaymentController(private val service: PaymentService) {
     @PostMapping("/echo")
     @Operation(
         summary = "Echo a payment",
-        description = "Echo a payment (returns the same payment data and saves it). Sample example: amount=2000.00, currency=EUR, status=PROCESSING"
+        description = "Echo a payment (returns the same payment data and saves it). Sample example: amount=2000.00, currency=EUR, status=PROCESSING. Supports Accept-Language header for i18n (default: en)."
     )
     @ApiResponses(
         value = [
@@ -159,7 +176,10 @@ class PaymentController(private val service: PaymentService) {
                 ]
             )]
         )
-        @RequestBody request: PaymentEchoRequest
+        @RequestBody request: PaymentEchoRequest,
+        
+        @Parameter(description = "Language preference (en, es, fr, de, hi, bn, ta, te, kn, ru, zh). Default: en", example = "hi")
+        @RequestHeader(name = "Accept-Language", required = false, defaultValue = "hi") acceptLanguage: String
     ): ResponseEntity<PaymentResponse> {
         return ResponseEntity.ok(service.echo(request))
     }
