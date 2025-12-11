@@ -1,4 +1,4 @@
-﻿package com.example.paymentecho.controller
+package com.example.paymentecho.controller
 
 import com.example.paymentecho.dto.PaymentRequest
 import com.example.paymentecho.dto.PaymentResponse
@@ -7,8 +7,8 @@ import jakarta.validation.Valid
 import org.springframework.http.ResponseEntity
 import org.springframework.validation.annotation.Validated
 import org.springframework.web.bind.annotation.*
-import java.net.URI
 import java.util.*
+import java.util.Locale
 
 /**
  * Payment REST controller.
@@ -37,3 +37,4 @@ class PaymentController(private val service: PaymentService) {
     fun echo(@Valid @RequestBody req: PaymentRequest): ResponseEntity<PaymentResponse> =
         ResponseEntity.ok(service.echo(req))
 }
+
